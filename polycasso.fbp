@@ -1,0 +1,9 @@
+<Project projectName="polycasso">
+  <Jar>./classes</Jar>
+  <AuxClasspathEntry>./lib/commons-io-1.4.jar</AuxClasspathEntry>
+  <AuxClasspathEntry>./lib/forms-1.2.1.jar</AuxClasspathEntry>
+  <SrcDir>./src</SrcDir>
+  <SuppressionFilter>
+    <LastVersion value="-1" relOp="NEQ"/>
+  </SuppressionFilter>
+</Project>

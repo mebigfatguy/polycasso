@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?> 
+<jnlp 
+  spec="1.0+" 
+  codebase="http://polycasso.sourceforge.net/jnlp" 
+  href="polycasso.jnlp">
+  <information> 
+    <title>Polycasso</title>
+    <vendor>MeBigFatGuy.com</vendor> 
+    <homepage href="http://polycasso.sourceforge.net"/> 
+    <description>A Cubism Artwork generator</description> 
+    <description kind="short">Inspired by work from Roger Alsing</description> 
+    <offline-allowed/> 
+  </information> 
+  <security> 
+      <all-permissions/> 
+  </security> 
+  <resources> 
+    <j2se version="1.6+" initial-heap-size="400m" max-heap-size="800m"/>
+    <jar href="polycasso-$VERSION.jar"/> 
+    <jar href="commons-io-1.4.jar"/> 
+    <jar href="forms-1.2.1.jar"/> 
+  </resources> 
+  <application-desc main-class="com.mebigfatguy.polycasso.Polycasso"/> 
+</jnlp> 
+

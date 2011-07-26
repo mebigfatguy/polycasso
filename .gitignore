@@ -1,0 +1,9 @@
+classes
+*.jar
+*.zip
+.settings
+.svn
+.hg
+.hgignore
+*.*~
+javadoc

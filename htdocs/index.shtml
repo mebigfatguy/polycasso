@@ -1,0 +1,91 @@
+<html>
+	<head>
+		<title>Polycasso - A Cubism Artwork Generation Tool</title>
+		<meta name="Keywords" content="polygon cubism image generation">
+		<script src="mbfg.js">
+		</script>
+		<script type="text/javascript">
+			var svgs = new Array();
+			svgs[0] = { url: 'polypig.svg',
+			            width: 235,
+			            height: 176
+			          };
+			svgs[1] = { url: 'polycar.svg',
+			            width: 500,
+			            height: 375
+			          };
+			svgs[2] = { url: 'polylamp.svg',
+			            width: 299,
+			            height: 400
+			          };
+			svgs[3] = { url: 'polybicycle.svg',
+			            width: 500,
+			            height: 333
+			          };
+			svgs[4] = { url: 'polypony.svg',
+				    width: 470,
+				    height: 324 
+				  };
+			svgs[5] = { url: 'polyshepherd.svg',
+				    width: 400,
+				    height: 358 
+				  };
+			svgs[6] = { url: 'oia.svg',
+				    width: 636,
+				    height: 474 
+				  };
+			  
+			function setSample()
+			{        
+				var sample = document.getElementById("sample");
+				if (sample != null)
+				{
+					var idx = Math.floor(Math.random()*svgs.length);
+					sample.src=svgs[idx].url;
+					sample.width=svgs[idx].width;
+					sample.height=svgs[idx].height;
+				}
+				setTimeout('setSample()', 10000);
+			}
+		</script>
+		<link rel="stylesheet" type="text/css" href="mbfg.css" />
+	</head>
+	<body background onload="setSample()">
+		<div style="position:absolute;top:0;left:0;width:256;height:65535;z-index:1;background-image:url(blend.jpg);">
+		</div>
+		<div style="position:absolute;top:20;left:20;z-index:3;">
+			<h1><img style="position:relative;top:10;" src="polycasso.png"/>&nbsp;Polycasso</h1>
+			<hr/>
+			<a href="http://www.sourceforge.net/projects/polycasso">Project Page</a>
+			<img src="vbar.gif" height="12"/>
+			<a href="javadoc/index.html">JavaDoc</a>
+			<img src="vbar.gif" height="12"/>
+			<a href="jnlp/polycasso.jnlp">Web Start</a>
+			<!--#include virtual="mbfg_menu.shtml" --> 
+			<hr/>
+	
+			<p>Thanks for your interest in Polycasso.</p>
+			
+			<p>Polycasso is a webstart application that attempts to create cubism style artwork through the layering of transparent polygons via a training 
+			feedback loop. Produces increasingly realistic work though hill climbing. This application was inspired by work
+			done by Roger Alsing.</p>
+			
+			<p>Launch the application, choose &#39;Start Generating Image&#39;, and let it sit for several hours, even a day. 
+			Good artwork takes time! -- and so does this.</p>
+			
+			<p>-- Dave Brosius</p>
+			<iframe id="sample" name="sample" src="polypig.svg" width="235px" height="176px"/>
+			<p>This pig is an svg output of polycasso</p>
+		</div>
+		<script type="text/javascript">
+			var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+			document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+		</script>
+		<script type="text/javascript">
+			try {
+				var pageTracker = _gat._getTracker("UA-249537-9");
+				pageTracker._trackPageview();
+			} catch(err) {}
+		</script>
+	</body>
+</html>

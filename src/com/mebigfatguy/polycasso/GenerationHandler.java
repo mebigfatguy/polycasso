@@ -1,0 +1,208 @@
+/*
+ * polycasso - Cubism Artwork generator
+ * Copyright 2009-2010 MeBigFatGuy.com
+ * Copyright 2009-2010 Dave Brosius
+ * Inspired by work by Roger Alsing
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); 
+ * you may not use this file except in compliance with the License. 
+ * You may obtain a copy of the License at 
+ * 
+ *    http://www.apache.org/licenses/LICENSE-2.0 
+ *    
+ * Unless required by applicable law or agreed to in writing, 
+ * software distributed under the License is distributed on an "AS IS" BASIS, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+ * See the License for the specific language governing permissions and limitations 
+ * under the License. 
+ */
+package com.mebigfatguy.polycasso;
+
+import java.awt.Dimension;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Random;
+
+/**
+ * class that maintains the set of polygon data for this generation of images
+ */
+public class GenerationHandler {
+	
+	/**
+	 * class that holds a sample set of polygons and it's score
+	 */
+	public static class Member implements Comparable<Member> {
+		
+		double score;
+		PolygonData[] data;
+		
+		Member(double polyScore, PolygonData[] polyData) {
+			score = polyScore;
+			data = polyData;
+		}
+
+		@Override
+		public int compareTo(Member o) {
+			if (score > o.score)
+				return 1;
+			else if (score < o.score)
+				return -1;
+			return 0;
+		}
+		
+		@Override
+		public int hashCode() {
+			return (int)score * 1000;
+		}
+		
+		@Override
+		public boolean equals(Object o) {
+			if (o instanceof Member) {
+				return score == ((Member)o).score;
+			}
+			return false;
+		}
+		
+		@Override
+		public String toString() {
+			return "(" + score + ": " + Arrays.toString(data) + ")";
+		}
+	}
+	
+	private List<Member> generation;
+	private Random random;
+	private Settings settings;
+	private int generationNumber;
+	private double annealingValue;
+	private Member bestMember;
+	private double eliteCutOff;
+	private int generationBests;
+	private int generationElites;
+	
+	/**
+	 * constructs a handler for managing successive generations of image samples
+	 * 
+	 * @param confSettings settings to use for generation and elite size
+	 * @param imageSize the size of the target image
+	 */
+	public GenerationHandler(Settings confSettings, Dimension imageSize) {
+		random = new Random();
+		generationNumber = 0;
+		settings = confSettings;
+		bestMember = new Member(Double.MAX_VALUE, new PolygonData[0]);
+		eliteCutOff = Double.MAX_VALUE;
+		generation = new ArrayList<Member>(settings.getGenerationSize() + 10);
+		annealingValue = settings.getStartTemperature() * settings.getStartTemperature() * imageSize.height * imageSize.width;
+		generationBests = 0;
+		generationElites = 0;
+	}
+	
+	/**
+	 * add a sample polygon set to this generation with a given score
+	 * 
+	 * @param score the deviation from perfection this set calculates
+	 * 
+	 * @param polygonData the polygons that draw the image
+	 * 
+	 * @return whether this is the best polygon set so far
+	 */
+	public ImprovementResult addPolygonData(double score, PolygonData[] polygonData) {		
+		synchronized(generation) {
+			Member newMember = new Member(score, polygonData);
+			generation.add(newMember);
+			if (generation.size() >= settings.getGenerationSize()) {
+				processGeneration();
+			} else {
+				Collections.sort(generation);
+			}
+			if (score < bestMember.score) {
+				bestMember = newMember;
+				generationBests++;
+				return ImprovementResult.BEST;
+			} else if (score < eliteCutOff) {
+				generationElites++;
+				return ImprovementResult.ELITE;
+			}
+			
+			return ImprovementResult.FAIL;
+		}
+	}
+	
+	/**
+	 * pick a random polygon sample either from the general pool or elite pool
+	 * skew the results towards the elite
+	 * 
+	 * @param elite whether to pick from the elite pool or not
+	 * @return a random polygon set
+	 */
+	public PolygonData[] getRandomPolygonData(boolean elite) {
+		synchronized(generation) {
+			int size = elite ? (settings.getEliteSize() % generation.size()) : generation.size();
+
+			if (size == 0)
+				return null;
+			
+			int r = random.nextInt(size);
+			
+			int idx = (int)(r * ((double) r / (double) size));
+			
+			return generation.get(idx).data;
+		}
+	}
+	
+	/**
+	 * returns the best polygon set to draw the picture
+	 * 
+	 * @return the best polygon set
+	 */
+	public Member getBestMember() {
+		synchronized(generation) {
+			return bestMember;
+		}
+	}
+	
+	private void processGeneration() {
+		int eliteSize = settings.getEliteSize();
+		
+		Collections.<GenerationHandler.Member>sort(generation);
+		int sz = generation.size();
+		
+		List<Member> nextGeneration = new ArrayList<Member>(settings.getGenerationSize() + 10);
+		for (int i = 0; i < eliteSize; i++) {
+			nextGeneration.add(generation.get(i));
+		}
+		
+		if (settings.isUseAnnealing() && (annealingValue > 0.01)) {
+		    int annealingReplacements = 0;
+		    /* always keep the best, so start at 1 */
+    		for (int i = 1; i < eliteSize; i++) {
+    		    int candidateIndex = random.nextInt(sz - eliteSize) + eliteSize;
+    		    Member candidate = generation.get(candidateIndex);
+    		    Member elite = generation.get(i);
+    		    double delta = candidate.score - elite.score;
+    		    if (delta < annealingValue) {
+    		        nextGeneration.set(i, candidate);
+    		        annealingReplacements++;
+    		    }
+    		}
+    		
+            if (Polycasso.DEBUG) {
+                System.out.println("Generation " + generationNumber + " had " + annealingReplacements + " annealing replacements with annealing value: " + annealingValue);
+            }
+		}
+		
+		generation = nextGeneration;
+		
+		eliteCutOff = generation.get(eliteSize-1).score;
+        
+        if (Polycasso.DEBUG) {
+        	System.out.println("Generation " + generationNumber + " had " + generationBests + " bests and " + generationElites + " elites. Best Score: " + generation.get(0).score);
+        }
+        generationBests = 0;
+        generationElites = 0;
+		generationNumber++;
+		annealingValue *= (1.0 - settings.getCoolingRate());
+	}
+}

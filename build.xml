@@ -1,0 +1,182 @@
+<!--
+/*
+ * polycasso - Cubism Artwork generator
+ * Copyright 2009-2010 MeBigFatGuy.com
+ * Copyright 2009-2010 Dave Brosius
+ * Inspired by work by Roger Alsing
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); 
+ * you may not use this file except in compliance with the License. 
+ * You may obtain a copy of the License at 
+ * 
+ *    http://www.apache.org/licenses/LICENSE-2.0 
+ *    
+ * Unless required by applicable law or agreed to in writing, 
+ * software distributed under the License is distributed on an "AS IS" BASIS, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+ * See the License for the specific language governing permissions and limitations 
+ * under the License. 
+ */
+ -->
+
+<project name="polycasso" default="jar">
+	
+	<property file="build.properties"/>
+	
+	<property name="src.dir" value="${basedir}/src"/>
+	<property name="classes.dir" value="${basedir}/classes"/>
+	<property name="lib.dir" value="${basedir}/lib"/>
+	<property name="etc.dir" value="${basedir}/etc"/>
+	<property name="htdocs.dir" value="${basedir}/htdocs"/>
+	<property name="jnlp.dir" value="${htdocs.dir}/jnlp"/>
+	<property name="javadoc.dir" value="${htdocs.dir}/javadoc"/>
+	<property name="javac.source" value="1.6"/>
+	<property name="javac.target" value="1.6"/>
+	<property name="javac.deprecation" value="on"/>
+	<property name="javac.debug" value="on"/>
+	
+	<property name="polycasso.version" value="1.5.0"/>
+	
+	<target name="clean" description="removes all generated collateral">
+		<delete dir="${classes.dir}"/>
+		<delete dir="${javadoc.dir}"/>
+		<delete>
+			<fileset dir="${jnlp.dir}">
+				<include name="polycasso*.jar"/>
+				<include name="*.jnlp"/>
+			</fileset>
+		</delete>
+		<delete>
+    		<fileset dir="${basedir}" includes="*.zip"/>
+  		</delete>
+	</target>
+	
+	<target name="-init" description="prepares repository for a build">
+		<mkdir dir="${classes.dir}"/>
+		<mkdir dir="${javadoc.dir}"/>
+		<path id="polycasso.classpath">
+			<pathelement location="${lib.dir}/commons-io-1.4.jar"/>
+			<pathelement location="${lib.dir}/forms-1.2.1.jar"/>
+		</path>
+	</target>
+		
+	<target name="compile" depends="-init" description="compiles java files">
+		<javac srcdir="${src.dir}"
+				destdir="${classes.dir}"
+				source="${javac.source}"
+				target="${javac.target}"
+				deprecation="${javac.deprecation}"
+				debug="${javac.debug}">
+			<classpath refid="polycasso.classpath"/>
+		</javac>
+	</target>
+	
+	<target name="resources" depends="-init" description="copies required files">
+		<copy todir="${classes.dir}">
+			<fileset dir="${src.dir}">
+				<include name="**/*.properties"/>
+				<include name="**/*.template"/>
+			</fileset>
+		</copy>
+		<echo message="${polycasso.version}" file="${classes.dir}/com/mebigfatguy/polycasso/Version.txt"/>
+		<copy todir="${jnlp.dir}">
+			<fileset dir="${etc.dir}">
+				<include name="*.jnlp"/>
+			</fileset>
+		</copy>
+		<replaceregexp byline="true">
+  			<regexp pattern="\$VERSION"/>
+  			<substitution expression="${polycasso.version}"/>
+  			<fileset dir="${jnlp.dir}">
+   				<include name="*.jnlp"/>
+  			</fileset>
+ 		</replaceregexp>
+	</target>
+	
+	<target name="jar" depends="compile, resources" description="produces the polycasso jar file">
+		<jar destfile="${jnlp.dir}/polycasso-${polycasso.version}.jar">
+			<fileset dir="${classes.dir}">
+				<include name="**/*.class"/>
+				<include name="**/*.properties"/>
+				<include name="**/*.txt"/>
+				<include name="**/*.template"/>
+			</fileset>
+			<fileset dir="${basedir}">
+				<include name="license.txt"/>
+			</fileset>
+			<manifest>
+				<attribute name="polycasso-version" value="${polycasso.version}"/>
+				<attribute name="Main-Class" value="com.mebigfatguy.polycasso.Polycasso"/>
+				<attribute name="Class-Path" value="commons-io-1.4.jar forms-1.2.1.jar"/>
+			</manifest>
+		</jar>	
+	</target>
+	
+	<target name="srczip" description="builds the source distribution zip file">
+		<zip destfile="${basedir}/polycasso-src-${polycasso.version}.zip" 
+			 basedir="${basedir}"
+			 includes="src/**/*.java, src/**/*.properties, lib/**/*.jar, *.txt"/>
+	</target>
+	
+	<target name="javadoc" depends="-init" description="build the javadoc for the project">
+		<javadoc packagenames="com.mebigfatguy.*"
+				 sourcepath="${src.dir}"
+				 classpathref="polycasso.classpath"
+				 destdir="${javadoc.dir}"
+				 windowtitle="polycasso api">
+		    <doctitle><![CDATA[<h1>polycasso javadoc</h1>]]></doctitle>
+		    <bottom><![CDATA[<i>Copyright &#169; 2009-2010 MeBigFatGuy.com. All Rights Reserved.</i>]]></bottom>
+		</javadoc>
+	</target>
+	
+	<target name="test" depends="-init, compile, resources" description="runs unit tests">
+		<path id="polycassotest.classpath">
+			<pathelement location="${classes.dir}"/>
+		</path>
+        <junit
+            printsummary="true"
+            haltonfailure="true"
+            haltonerror="true"
+            showoutput="true"
+            fork="true">
+
+            <classpath><path refid="polycasso.classpath"/></classpath>
+            <batchtest fork="true">
+                <fileset dir="${classes.dir}"
+                	excludes="test/*$*"
+                    includes="test/*"/>
+            </batchtest>
+        </junit>
+	</target>
+	
+	<target name="build" depends="clean, -init, compile, resources, test, jar" description="builds the polycasso jar"/>
+	
+	<target name="jnlp" description="copy jars to jnlp directory">
+		<copy todir="${jnlp.dir}">
+			<fileset dir="${lib.dir}">
+				<include name="*.jar"/>
+			</fileset>
+			<fileset dir="${basedir}">
+				<include name="*.jar"/>
+			</fileset>
+		</copy>
+		<input message="Enter keystore password" addproperty="pass"/>
+		<signjar keystore="polycasso.store" 
+		         alias="polycasso"
+		         keypass="${pass}"
+		         storepass="${pass}">
+		    <fileset dir="${jnlp.dir}">
+				<include name="*.jar"/>
+			</fileset>
+		</signjar>
+	</target>
+	
+	<target name="binzip" depends="build" description="zips up all jars">
+		<zip destfile="${basedir}/polycasso-bin-${polycasso.version}.zip" 
+			 basedir="${jnlp.dir}"
+			 includes="polycasso-${polycasso.version}.jar commons-io-1.4.jar forms-1.2.1.jar"/>
+	</target>
+	
+	<target name="release" depends="build, jnlp, binzip, srczip, javadoc" description="prepares everything for a release"/>
+
+</project>
