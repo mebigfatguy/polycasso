@@ -45,7 +45,7 @@ public class ImageCompleter implements Runnable {
 	 * 
 	 * @param generator the image generator that this completer is working for
 	 * @param image the target image that will eventually be drawn
-	 * @param bestData the best proximation the program reached
+	 * @param bestData the best approximation the program reached
 	 * @param size the image size
 	 */
 	
