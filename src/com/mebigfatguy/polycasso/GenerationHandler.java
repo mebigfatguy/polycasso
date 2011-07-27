@@ -35,10 +35,10 @@ public class GenerationHandler {
 	 */
 	public static class Member implements Comparable<Member> {
 		
-		double score;
+		long score;
 		PolygonData[] data;
 		
-		Member(double polyScore, PolygonData[] polyData) {
+		Member(long polyScore, PolygonData[] polyData) {
 			score = polyScore;
 			data = polyData;
 		}
@@ -92,8 +92,8 @@ public class GenerationHandler {
 		random = new Random();
 		generationNumber = 0;
 		settings = confSettings;
-		bestMember = new Member(Double.MAX_VALUE, new PolygonData[0]);
-		eliteCutOff = Double.MAX_VALUE;
+		bestMember = new Member(Long.MAX_VALUE, new PolygonData[0]);
+		eliteCutOff = Long.MAX_VALUE;
 		generation = new ArrayList<Member>(settings.getGenerationSize() + 10);
 		annealingValue = settings.getStartTemperature() * settings.getStartTemperature() * imageSize.height * imageSize.width;
 		generationBests = 0;
@@ -109,7 +109,7 @@ public class GenerationHandler {
 	 * 
 	 * @return whether this is the best polygon set so far
 	 */
-	public ImprovementResult addPolygonData(double score, PolygonData[] polygonData) {		
+	public ImprovementResult addPolygonData(long score, PolygonData[] polygonData) {		
 		synchronized(generation) {
 			Member newMember = new Member(score, polygonData);
 			generation.add(newMember);
@@ -182,7 +182,7 @@ public class GenerationHandler {
     		    int candidateIndex = random.nextInt(sz - eliteSize) + eliteSize;
     		    Member candidate = generation.get(candidateIndex);
     		    Member elite = generation.get(i);
-    		    double delta = candidate.score - elite.score;
+    		    long delta = candidate.score - elite.score;
     		    if (delta < annealingValue) {
     		        nextGeneration.set(i, candidate);
     		        annealingReplacements++;

@@ -50,28 +50,28 @@ public class Feedback {
 	 * @param testImage the image to score
 	 * @return a value that represents its closeness to ideal
 	 */
-	public double calculateDelta(BufferedImage testImage) {
+	public long calculateDelta(BufferedImage testImage) {
 		WritableRaster raster = testImage.getRaster();
 		DataBufferByte dbb = (DataBufferByte)raster.getDataBuffer();
 		byte[] testBuffer = dbb.getData();
 		
-		double error = 0.0;
+		long error = 0L;
 		
 		//index 0 is alpha, start at 1 (blue)
 		for (int i = 1; i < size; i++) {
 			int blue1 = targetBuffer[i] & 0x0FF;
 			int blue2 = testBuffer[i++] & 0x0FF;
-			double blueError = blue1 - blue2;
+			long blueError = blue1 - blue2;
 			blueError *= blueError;
 			
 			int green1 = targetBuffer[i] & 0x0FF;
 			int green2 = testBuffer[i++] & 0x0FF;
-			double greenError = green1 - green2;
+			long greenError = green1 - green2;
 			greenError *= greenError;
 			
 			int red1 = targetBuffer[i] & 0x0FF;
 			int red2 = testBuffer[i++] & 0x0FF;
-			double redError = red1 - red2;
+			long redError = red1 - red2;
 			redError *= redError;
 			
 			error += redError + greenError  + blueError;

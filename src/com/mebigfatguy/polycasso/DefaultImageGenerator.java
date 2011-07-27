@@ -198,7 +198,7 @@ public class DefaultImageGenerator implements ImageGenerator, Runnable {
     				List<PolygonData> data = improver.getData();
     				imagePolygonData(g2d, data, srcOpaque);
     
-    				double delta = feedback.calculateDelta(image);
+    				long delta = feedback.calculateDelta(image);
     				
     				boolean wasSuccessful;
     				
@@ -250,7 +250,7 @@ public class DefaultImageGenerator implements ImageGenerator, Runnable {
 	        Graphics2D g2d = (Graphics2D)image.getGraphics();
 	        try {
                 imagePolygonData(g2d, polygons, srcOpaque);
-                double delta = feedback.calculateDelta(image);
+                long delta = feedback.calculateDelta(image);
                 generationHandler.addPolygonData(delta, polygons.toArray(new PolygonData[polygons.size()]));
 	        } finally {
 	            g2d.dispose();
