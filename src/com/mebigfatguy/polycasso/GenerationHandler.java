@@ -49,7 +49,8 @@ public class GenerationHandler {
 				return 1;
 			else if (score < o.score)
 				return -1;
-			return 0;
+			
+			return data.length - o.data.length;
 		}
 		
 		@Override
