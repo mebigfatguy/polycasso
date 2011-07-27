@@ -1,7 +1,7 @@
 /*
  * polycasso - Cubism Artwork generator
- * Copyright 2009-2010 MeBigFatGuy.com
- * Copyright 2009-2010 Dave Brosius
+ * Copyright 2009-2011 MeBigFatGuy.com
+ * Copyright 2009-2011 Dave Brosius
  * Inspired by work by Roger Alsing
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
@@ -18,241 +18,31 @@
  */
 package com.mebigfatguy.polycasso;
 
-import java.awt.AlphaComposite;
-import java.awt.Color;
-import java.awt.Composite;
 import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 /**
- * class that generates test images iteratively looking for the best image that matches a target.
- * The images are generated from semi-transparent polygons that are improved upon over time. 
- * This class generates multiple images in parallel to keep multicore processors busy.
+ * interface that generates test images iteratively looking for the best image that matches a target.
  */
-public class ImageGenerator implements Runnable {
-	private Set<ImageGeneratedListener> listeners = new HashSet<ImageGeneratedListener>();
-	private Settings settings;
-	private BufferedImage targetImage; 
-	private GenerationHandler generationHandler;
-	private Dimension imageSize;
-	private Feedback feedback;
-	private Thread[] t = null;
-	private Object startStopLock = new Object();
-	
-	/**
-	 * creates an ImageGenerator for the given target image, and size
-	 * @param confSettings the configuration settings
-	 * @param image the target image
-	 * @param size the dimension of the image
-	 */
-	public ImageGenerator(Settings confSettings, Image image, Dimension size) {
-		settings = confSettings;
-		imageSize = trimSize(size, settings.getMaxImageSize());
-		targetImage = new BufferedImage(imageSize.width, imageSize.height, BufferedImage.TYPE_4BYTE_ABGR);
-		Graphics g = targetImage.getGraphics();
-		g.drawImage(image, 0, 0, imageSize.width, imageSize.height, Color.WHITE, null);
-		generationHandler = new GenerationHandler(settings, imageSize);
-		feedback = new Feedback(targetImage);
-	}
-	
-	/**
-	 * retrieves the scaled target iamge
-	 * 
-	 * @return the target image
-	 */
-	public BufferedImage getTargetImage() {
-		return targetImage;
-	}
-	
-	/**
-	 * returns the image size that is being generated. This size might be different the original image
-	 * if the size is bigger then the max setting.
-	 * 
-	 * @return the image size
-	 */
-	public Dimension getImageSize() {
-		return imageSize;
-	}
-	
-	/**
-	 * allows interested parties to register to receive events when a new best image has been
-	 * found.
-	 * 
-	 * @param listener the listener that is interested in events
-	 */
-	public void addImageGeneratedListener(ImageGeneratedListener listener) {
-		listeners.add(listener);
-	}
-	
-	/**
-	 * allows uninterested parties to unregister to receive events when a new best image is 
-	 * found
-	 * 
-	 * @param listener the listener that is no longer needed
-	 */
-	public void removeImageGeneratedListener(ImageGeneratedListener listener) {
-		listeners.remove(listener);
-	}
-	
-	/**
-	 * informs all listeners that a new best image has been found
-	 * 
-	 * @param image the new best image
-	 */
-	public void fireImageGenerated(Image image) {
-		ImageGeneratedEvent event = new ImageGeneratedEvent(this, image);
-		for (ImageGeneratedListener listener : listeners) {
-			listener.imageGenerated(event);
-		}
-	}
-	
-	/**
-	 * starts up threads to start looking for images that are closest to the target
-	 */
-	public void startGenerating() {
-		synchronized(startStopLock) {
-			if (t == null) {
-			    
-			    populateGenerationZeroElite();
-				t = new Thread[Runtime.getRuntime().availableProcessors() + 1];
-				for (int i = 0; i < t.length; i++) {
-					t[i] = new Thread(this);
-					t[i].setName("Improver : " + i);
-					t[i].start();
-				}
-			}
-		}
-	}
-	
-	/**
-	 * shuts down threads that were looking for images
-	 */
-	public void stopGenerating() {
-		synchronized(startStopLock) {
-			if (t != null) {
-				try {
-					for (int i = 0; i < t.length; i++) {
-						t[i].interrupt();
-					}
-					for (int i = 0; i < t.length; i++) {
-						t[i].join();
-					}
-				} catch (InterruptedException ie) {
-				} finally {
-					t = null;
-				}
-			}
-		}
-	}
-	
-	/**
-	 * completes the image by transforming the polygon image to the real image
-	 */
-	public void complete() {
-		synchronized(startStopLock) {
-			if (t != null) {
-				stopGenerating();
-				t = new Thread[1];
-				t[0] = new Thread(new ImageCompleter(this, targetImage, generationHandler.getBestMember().data, imageSize));
-				t[0].start();
-			}
-		}
-	}
-	
-	/**
-	 * retrieves the best set of polygons for drawing the image so far
-	 * 
-	 * @return the best set of polygons
-	 */
-	public PolygonData[] getBestData() {
-		return generationHandler.getBestMember().data;
-	}
-	/**
-	 * the runnable interface implementation to repeatedly improve upon the image and check to 
-	 * see if it is closer to the target image. Images are created in batches of settings.numCompetingImages
-	 * and the best one (if better than the parent) is selected as the new best.
-	 */
-	public void run() {
-		try {
-			BufferedImage image = new BufferedImage(imageSize.width, imageSize.height, BufferedImage.TYPE_4BYTE_ABGR);
-			Graphics2D g2d = (Graphics2D)image.getGraphics();
-			Composite srcOpaque = AlphaComposite.getInstance(AlphaComposite.SRC, 1.0f);
-			Improver improver = new Improver(settings, generationHandler, imageSize);
-			
-			while (!Thread.interrupted()) {
-				ImprovementType type = improver.improveRandomly();
-				
-				List<PolygonData> data = improver.getData();
-				imagePolygonData(g2d, data, srcOpaque);
 
-				double delta = feedback.calculateDelta(image);
-				
-				boolean wasSuccessful;
-				
-				ImprovementResult result = generationHandler.addPolygonData(delta, data.toArray(new PolygonData[data.size()]));
-				switch (result) {
-					case BEST:
-						fireImageGenerated(image);
-						wasSuccessful = true;	
-						image = new BufferedImage(imageSize.width, imageSize.height, BufferedImage.TYPE_4BYTE_ABGR);
-						g2d = (Graphics2D)image.getGraphics();
-					break;
-					
-					case ELITE:
-						wasSuccessful = true;
-					break;
-					
-					default:
-						wasSuccessful = false;
-				}
-				
-				improver.typeWasSuccessful(type, wasSuccessful);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-	
-	private void imagePolygonData(Graphics2D g2d, List<PolygonData> polygonData, Composite srcOpaque) {
-	    g2d.setColor(Color.BLACK);
-        g2d.setComposite(srcOpaque);
-        g2d.fillRect(0, 0, imageSize.width, imageSize.height);
-        
-        for (PolygonData pd : polygonData) {
-            pd.draw(g2d);
-        }
-	}
-	
-	private void populateGenerationZeroElite() {
-        Composite srcOpaque = AlphaComposite.getInstance(AlphaComposite.SRC, 1.0f);
-	    for (int i = 0; i < settings.getEliteSize(); i++) {   
-	        BufferedImage image = new BufferedImage(imageSize.width, imageSize.height, BufferedImage.TYPE_4BYTE_ABGR);
-	        List<PolygonData> polygons = new ArrayList<PolygonData>();
-	        PolygonData pd = PolygonData.randomPoly(imageSize, settings.getMaxPoints());
-	        polygons.add(pd);
-	        Graphics2D g2d = (Graphics2D)image.getGraphics();
-            imagePolygonData(g2d, polygons, srcOpaque);
-            double delta = feedback.calculateDelta(image);
-            generationHandler.addPolygonData(delta, polygons.toArray(new PolygonData[polygons.size()]));
-	    }
-	}
-	
-	private Dimension trimSize(Dimension origSize, Dimension maxSize) {
-		if ((origSize.width < maxSize.width) && (origSize.height < maxSize.height))
-			return origSize;
-		
-		double hFrac = (double)maxSize.width / (double)origSize.width;
-		double vFrac = (double)maxSize.height/ (double)origSize.height;
-		
-		double frac = (hFrac < vFrac) ? hFrac : vFrac;
-		
-		return new Dimension((int)(frac * origSize.width), (int)(frac * origSize.height));
-	}
+public interface ImageGenerator {
+    
+    void startGenerating();
+    
+    void stopGenerating();
+    
+    BufferedImage getTargetImage();
+    
+    Dimension getImageSize();  
+    
+    PolygonData[] getBestData();
+    
+    void complete();
+    
+    void addImageGeneratedListener(ImageGeneratedListener listener);
+    
+    void removeImageGeneratedListener(ImageGeneratedListener listener);
+    
+    void fireImageGenerated(Image image);
 }

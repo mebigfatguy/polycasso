@@ -1,7 +1,7 @@
 /*
  * polycasso - Cubism Artwork generator
- * Copyright 2009-2010 MeBigFatGuy.com
- * Copyright 2009-2010 Dave Brosius
+ * Copyright 2009-2011 MeBigFatGuy.com
+ * Copyright 2009-2011 Dave Brosius
  * Inspired by work by Roger Alsing
  *  
  * Licensed under the Apache License, Version 2.0 (the "License"); 
@@ -286,7 +286,7 @@ public class PainterFrame extends JFrame implements ImageGeneratedListener {
 		
 		ImageSizer sizer = new ImageSizer(targetImage);
 		Dimension size = new Dimension(sizer.getWidth(), sizer.getHeight());
-		generator = new ImageGenerator(settings, targetImage, size);
+		generator = new DefaultImageGenerator(settings, targetImage, size);
 		
 		panel.setTarget(generator.getTargetImage());
 		size = generator.getImageSize();
@@ -297,7 +297,7 @@ public class PainterFrame extends JFrame implements ImageGeneratedListener {
 			wSize.height *= 2;	
 		}
 		setSize(wSize);
-		generator = new ImageGenerator(settings, targetImage, size);
+		generator = new DefaultImageGenerator(settings, targetImage, size);
 		generator.addImageGeneratedListener(PainterFrame.this);
 		generator.startGenerating();
 		completeImage.setEnabled(true);
