@@ -35,6 +35,9 @@
 	<property name="javac.deprecation" value="on"/>
 	<property name="javac.debug" value="on"/>
 	
+	<property name="forms.version" value="1.2.1"/>
+	<property name="commons-io.version" value="1.4"/> 
+	
 	<property name="polycasso.version" value="1.5.0"/>
 	
 	<target name="clean" description="removes all generated collateral">
@@ -55,12 +58,35 @@
 		<mkdir dir="${classes.dir}"/>
 		<mkdir dir="${javadoc.dir}"/>
 		<path id="polycasso.classpath">
-			<pathelement location="${lib.dir}/commons-io-1.4.jar"/>
-			<pathelement location="${lib.dir}/forms-1.2.1.jar"/>
+			<pathelement location="${lib.dir}/commons-io-${commons-io.version}.jar"/>
+			<pathelement location="${lib.dir}/forms-${forms.version}.jar"/>
 		</path>
 	</target>
+
+
+	<property name="forms_url" value="http://repo1.maven.org/maven2/com/jgoodies/forms/${forms.version}/forms-${forms.version}.jar"/> 
+    <property name="commonsio_url" value="http://repo1.maven.org/maven2/commons-io/commons-io/${commons-io.version}/commons-io-${commons-io.version}.jar"/> 
+	
+    <target name="forms_check">
+        <available file="${basedir}/lib/forms-${forms.version}.jar" property="forms_exists"/>
+    </target>
+
+    <target name="commonsio_check">
+        <available file="${basedir}/lib/commons-io-${commons-io.version}.jar" property="commonsio.exists"/>
+    </target>
+
+    <target name="install_forms" depends="forms_check" unless="forms_exists" description="installs forms.jar into lib">
+        <get src="${forms_url}" dest="${basedir}/lib/forms-${forms.version}.jar" verbose="true" ignoreerrors="true"/>
+    </target>
+
+    <target name="install_commonsio" depends="commonsio_check" unless="commonsio.exists" description="installs commons-io.jar into lib">
+        <get src="${commonsio_url}" dest="${basedir}/lib/commons-io-${commons-io.version}.jar" verbose="true" ignoreerrors="true"/>
+    </target>
+	
+    <target name="pull" depends="install_forms, install_commonsio" description="pulls in the 3rd party jars">
+    </target>
 		
-	<target name="compile" depends="-init" description="compiles java files">
+	<target name="compile" depends="-init, pull" description="compiles java files">
 		<javac srcdir="${src.dir}"
 				destdir="${classes.dir}"
 				source="${javac.source}"
@@ -107,7 +133,7 @@
 			<manifest>
 				<attribute name="polycasso-version" value="${polycasso.version}"/>
 				<attribute name="Main-Class" value="com.mebigfatguy.polycasso.Polycasso"/>
-				<attribute name="Class-Path" value="commons-io-1.4.jar forms-1.2.1.jar"/>
+				<attribute name="Class-Path" value="commons-io-${commons-io.version}.jar forms-${forms.version}.jar"/>
 			</manifest>
 		</jar>	
 	</target>
@@ -174,7 +200,7 @@
 	<target name="binzip" depends="build" description="zips up all jars">
 		<zip destfile="${basedir}/polycasso-bin-${polycasso.version}.zip" 
 			 basedir="${jnlp.dir}"
-			 includes="polycasso-${polycasso.version}.jar commons-io-1.4.jar forms-1.2.1.jar"/>
+			 includes="polycasso-${polycasso.version}.jar commons-io-${commons-io.version}.jar forms-${forms.version}.jar"/>
 	</target>
 	
 	<target name="release" depends="build, jnlp, binzip, srczip, javadoc" description="prepares everything for a release"/>
