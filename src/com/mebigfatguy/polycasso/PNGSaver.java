@@ -52,15 +52,18 @@ public class PNGSaver implements Saver {
 			
 			BufferedImage image = new BufferedImage(imageSize.width, imageSize.height, BufferedImage.TYPE_4BYTE_ABGR);
 			Graphics2D g2d = (Graphics2D)image.getGraphics();
-			g2d.setColor(Color.BLACK);
-			g2d.fillRect(0, 0, imageSize.width, imageSize.height);
-			
-			for (PolygonData pd : data) {
-				pd.draw(g2d);
-			}
-			
-			ImageIO.write(image, "png", bos);	
-			
+			try {
+    			g2d.setColor(Color.BLACK);
+    			g2d.fillRect(0, 0, imageSize.width, imageSize.height);
+    			
+    			for (PolygonData pd : data) {
+    				pd.draw(g2d);
+    			}
+    			
+    			ImageIO.write(image, "png", bos);	
+			} finally {
+			    g2d.dispose();
+			}	
 		} finally {
 			IOUtils.closeQuietly(bos);
 		}

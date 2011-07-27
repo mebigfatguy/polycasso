@@ -56,10 +56,15 @@ public class DefaultImageGenerator implements ImageGenerator, Runnable {
 		settings = confSettings;
 		imageSize = trimSize(size, settings.getMaxImageSize());
 		targetImage = new BufferedImage(imageSize.width, imageSize.height, BufferedImage.TYPE_4BYTE_ABGR);
+		
 		Graphics g = targetImage.getGraphics();
-		g.drawImage(image, 0, 0, imageSize.width, imageSize.height, Color.WHITE, null);
-		generationHandler = new GenerationHandler(settings, imageSize);
-		feedback = new Feedback(targetImage);
+		try {
+    		g.drawImage(image, 0, 0, imageSize.width, imageSize.height, Color.WHITE, null);
+    		generationHandler = new GenerationHandler(settings, imageSize);
+    		feedback = new Feedback(targetImage);
+		} finally {
+		    g.dispose();
+		}
 	}
 	
 	/**
@@ -183,37 +188,42 @@ public class DefaultImageGenerator implements ImageGenerator, Runnable {
 		try {
 			BufferedImage image = new BufferedImage(imageSize.width, imageSize.height, BufferedImage.TYPE_4BYTE_ABGR);
 			Graphics2D g2d = (Graphics2D)image.getGraphics();
-			Composite srcOpaque = AlphaComposite.getInstance(AlphaComposite.SRC, 1.0f);
-			Improver improver = new Improver(settings, generationHandler, imageSize);
-			
-			while (!Thread.interrupted()) {
-				ImprovementType type = improver.improveRandomly();
-				
-				List<PolygonData> data = improver.getData();
-				imagePolygonData(g2d, data, srcOpaque);
-
-				double delta = feedback.calculateDelta(image);
-				
-				boolean wasSuccessful;
-				
-				ImprovementResult result = generationHandler.addPolygonData(delta, data.toArray(new PolygonData[data.size()]));
-				switch (result) {
-					case BEST:
-						fireImageGenerated(image);
-						wasSuccessful = true;	
-						image = new BufferedImage(imageSize.width, imageSize.height, BufferedImage.TYPE_4BYTE_ABGR);
-						g2d = (Graphics2D)image.getGraphics();
-					break;
-					
-					case ELITE:
-						wasSuccessful = true;
-					break;
-					
-					default:
-						wasSuccessful = false;
-				}
-				
-				improver.typeWasSuccessful(type, wasSuccessful);
+			try {
+    			Composite srcOpaque = AlphaComposite.getInstance(AlphaComposite.SRC, 1.0f);
+    			Improver improver = new Improver(settings, generationHandler, imageSize);
+    			
+    			while (!Thread.interrupted()) {
+    				ImprovementType type = improver.improveRandomly();
+    				
+    				List<PolygonData> data = improver.getData();
+    				imagePolygonData(g2d, data, srcOpaque);
+    
+    				double delta = feedback.calculateDelta(image);
+    				
+    				boolean wasSuccessful;
+    				
+    				ImprovementResult result = generationHandler.addPolygonData(delta, data.toArray(new PolygonData[data.size()]));
+    				switch (result) {
+    					case BEST:
+    						fireImageGenerated(image);
+    						wasSuccessful = true;	
+    						image = new BufferedImage(imageSize.width, imageSize.height, BufferedImage.TYPE_4BYTE_ABGR);
+    						g2d.dispose();
+    						g2d = (Graphics2D)image.getGraphics();
+    					break;
+    					
+    					case ELITE:
+    						wasSuccessful = true;
+    					break;
+    					
+    					default:
+    						wasSuccessful = false;
+    				}
+    				
+    				improver.typeWasSuccessful(type, wasSuccessful);
+    			}
+			} finally {
+			    g2d.dispose();
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -238,9 +248,13 @@ public class DefaultImageGenerator implements ImageGenerator, Runnable {
 	        PolygonData pd = PolygonData.randomPoly(imageSize, settings.getMaxPoints());
 	        polygons.add(pd);
 	        Graphics2D g2d = (Graphics2D)image.getGraphics();
-            imagePolygonData(g2d, polygons, srcOpaque);
-            double delta = feedback.calculateDelta(image);
-            generationHandler.addPolygonData(delta, polygons.toArray(new PolygonData[polygons.size()]));
+	        try {
+                imagePolygonData(g2d, polygons, srcOpaque);
+                double delta = feedback.calculateDelta(image);
+                generationHandler.addPolygonData(delta, polygons.toArray(new PolygonData[polygons.size()]));
+	        } finally {
+	            g2d.dispose();
+	        }
 	    }
 	}
 	

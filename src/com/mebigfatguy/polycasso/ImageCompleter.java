@@ -56,13 +56,17 @@ public class ImageCompleter implements Runnable {
 		
 		srcImage = new BufferedImage(imageSize.width, imageSize.height, BufferedImage.TYPE_4BYTE_ABGR);
 		Graphics2D g2d = (Graphics2D)srcImage.getGraphics();
-		Composite srcOpaque = AlphaComposite.getInstance(AlphaComposite.SRC, 1.0f);
-		g2d.setColor(Color.BLACK);
-		g2d.setComposite(srcOpaque);
-		g2d.fillRect(0, 0, imageSize.width, imageSize.height);
-		
-		for (PolygonData pd : bestData) {
-			pd.draw(g2d);
+		try {
+    		Composite srcOpaque = AlphaComposite.getInstance(AlphaComposite.SRC, 1.0f);
+    		g2d.setColor(Color.BLACK);
+    		g2d.setComposite(srcOpaque);
+    		g2d.fillRect(0, 0, imageSize.width, imageSize.height);
+    		
+    		for (PolygonData pd : bestData) {
+    			pd.draw(g2d);
+    		}
+		} finally {
+		    g2d.dispose();
 		}
 	}
 	
