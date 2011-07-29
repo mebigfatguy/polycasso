@@ -38,7 +38,7 @@
 	<property name="forms.version" value="1.2.1"/>
 	<property name="commons-io.version" value="1.4"/> 
 	
-	<property name="polycasso.version" value="1.5.0"/>
+	<property name="polycasso.version" value="1.6.0"/>
 	
 	<target name="clean" description="removes all generated collateral">
 		<delete dir="${classes.dir}"/>
