@@ -28,7 +28,7 @@ public class Polycasso {
 	/**
 	 * enable some console debugging, and show the target image
 	 */
-	public static final boolean DEBUG = true;
+	public static final boolean DEBUG = false;
 	
 	/**
 	 * the main entry point to the web start app
