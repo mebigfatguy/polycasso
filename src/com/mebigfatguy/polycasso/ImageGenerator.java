@@ -28,21 +28,63 @@ import java.awt.image.BufferedImage;
 
 public interface ImageGenerator {
     
+    /**
+     * starts up threads to start looking for images that are closest to the target
+     */
     void startGenerating();
     
+    /**
+     * shuts down threads that were looking for images
+     */
     void stopGenerating();
     
+    /**
+     * retrieves the scaled target iamge
+     * 
+     * @return the target image
+     */
     BufferedImage getTargetImage();
     
+    /**
+     * returns the image size that is being generated. This size might be different the original image
+     * if the size is bigger then the max setting.
+     * 
+     * @return the image size
+     */
     Dimension getImageSize();  
     
+    /**
+     * retrieves the best set of polygons for drawing the image so far
+     * 
+     * @return the best set of polygons
+     */
     PolygonData[] getBestData();
     
+    /**
+     * completes the image by transforming the polygon image to the real image
+     */
     void complete();
     
+    /**
+     * allows interested parties to register to receive events when a new best image has been
+     * found.
+     * 
+     * @param listener the listener that is interested in events
+     */
     void addImageGeneratedListener(ImageGeneratedListener listener);
     
+    /**
+     * allows uninterested parties to unregister to receive events when a new best image is 
+     * found
+     * 
+     * @param listener the listener that is no longer needed
+     */
     void removeImageGeneratedListener(ImageGeneratedListener listener);
     
+    /**
+     * informs all listeners that a new best image has been found
+     * 
+     * @param image the new best image
+     */
     void fireImageGenerated(Image image);
 }
