@@ -249,8 +249,9 @@ public class Improver {
 				PolygonData pd = (PolygonData)polygons.get(idx).clone();
 				Polygon polygon = pd.getPolygon();
 				int maxMovement = settings.getMaxPtMovement();
-				int shiftX = r.nextInt(2 * maxMovement) + maxMovement;
-				int shiftY = r.nextInt(2 * maxMovement) + maxMovement;
+				int dblMax = maxMovement << 1;
+				int shiftX = r.nextInt(dblMax) + maxMovement;
+				int shiftY = r.nextInt(dblMax) + maxMovement;
 				for (int i = 0; i < polygon.npoints; i++) {
 					polygon.xpoints[i] += shiftX;
 					polygon.ypoints[i] += shiftY;
