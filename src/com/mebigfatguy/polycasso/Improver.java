@@ -125,9 +125,10 @@ public class Improver {
 					int x = r.nextInt(maxX) + Math.min(polygon.xpoints[lastPt], polygon.xpoints[insPos]);
 					int y = r.nextInt(maxY) + Math.min(polygon.ypoints[lastPt], polygon.ypoints[insPos]);
 					
-					System.arraycopy(polygon.xpoints, insPos, polygon.xpoints, insPos + 1, polygon.npoints - insPos - 1);
+					int numCopyPts = polygon.npoints - insPos - 1;
+					System.arraycopy(polygon.xpoints, insPos, polygon.xpoints, insPos + 1, numCopyPts);
 					polygon.xpoints[insPos] = x;
-					System.arraycopy(polygon.ypoints, insPos, polygon.ypoints, insPos + 1, polygon.npoints - insPos - 1);
+					System.arraycopy(polygon.ypoints, insPos, polygon.ypoints, insPos + 1, numCopyPts);
 					polygon.ypoints[insPos] = y;
 					polygons.set(idx, pd);
 					
@@ -146,8 +147,9 @@ public class Improver {
 				if (polygon.npoints > 3) {
 					int delPos = r.nextInt(polygon.npoints);
 					
-					System.arraycopy(polygon.xpoints, delPos+1, polygon.xpoints, delPos, polygon.npoints - delPos - 1);
-					System.arraycopy(polygon.ypoints, delPos+1, polygon.ypoints, delPos, polygon.npoints - delPos - 1);
+					int numPtCopy = polygon.npoints - delPos - 1;
+					System.arraycopy(polygon.xpoints, delPos+1, polygon.xpoints, delPos, numPtCopy);
+					System.arraycopy(polygon.ypoints, delPos+1, polygon.ypoints, delPos, numPtCopy);
 					polygon.npoints--;
 					polygons.set(idx, pd);
 				} else {
