@@ -18,8 +18,20 @@
  */
 package com.mebigfatguy.polycasso;
 
+/**
+ * an enum that describes the result of an attempted improvement on an image
+ */
 public enum ImprovementResult {
+    /**
+     * this improvement is better than last generations best image
+     */
 	BEST,
+	/**
+	 * this improvement is better than the worst elite image from last generation
+	 */
 	ELITE,
+	/**
+	 * this improvement didn't improve any on the elite set from last generation
+	 */
 	FAIL;
 }
