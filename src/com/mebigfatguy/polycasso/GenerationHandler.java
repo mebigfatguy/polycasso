@@ -19,6 +19,7 @@
 package com.mebigfatguy.polycasso;
 
 import java.awt.Dimension;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -28,9 +29,11 @@ import java.util.Random;
 /**
  * class that maintains the set of polygon data for this generation of images
  */
-public class GenerationHandler {
+public class GenerationHandler implements Serializable {
 	
-	/**
+	private static final long serialVersionUID = 2375492293685052783L;
+
+    /**
 	 * class that holds a sample set of polygons and it's score
 	 */
 	public static class Member implements Comparable<Member> {
