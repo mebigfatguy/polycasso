@@ -42,7 +42,7 @@ public class DefaultImageGenerator implements ImageGenerator, Runnable {
 	private BufferedImage targetImage; 
 	private GenerationHandler generationHandler;
 	private Dimension imageSize;
-	private DefaultFeedback feedback;
+	private Feedback feedback;
 	private Thread[] t = null;
 	private Object startStopLock = new Object();
 	
@@ -199,7 +199,7 @@ public class DefaultImageGenerator implements ImageGenerator, Runnable {
     				List<PolygonData> data = improver.getData();
     				imagePolygonData(g2d, data, srcOpaque);
     
-    				Score delta = feedback.calculateScore(image, null);
+    				Score delta = feedback.calculateScore(image, null, improver.getChangedArea());
     				
     				boolean wasSuccessful;
     				
@@ -251,7 +251,7 @@ public class DefaultImageGenerator implements ImageGenerator, Runnable {
 	        Graphics2D g2d = (Graphics2D)image.getGraphics();
 	        try {
                 imagePolygonData(g2d, polygons, srcOpaque);
-                Score delta = feedback.calculateScore(image, null);
+                Score delta = feedback.calculateScore(image, null, null);
                 generationHandler.addPolygonData(delta, polygons.toArray(new PolygonData[polygons.size()]));
 	        } finally {
 	            g2d.dispose();

@@ -360,6 +360,15 @@ public class Improver {
 	}
 	
 	/**
+	 * returns the area that was changed in this image
+	 * 
+	 * @return the rectangular bounds that was changed, or null for a complete change
+	 */
+	public Rectangle getChangedArea() {
+	    return null;
+	}
+	
+	/**
 	 * generates a random polygon change (all values)
 	 */
 	private void randomCompleteChange() {

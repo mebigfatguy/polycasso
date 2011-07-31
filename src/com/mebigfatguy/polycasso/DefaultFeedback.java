@@ -18,6 +18,7 @@
  */
 package com.mebigfatguy.polycasso;
 
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 import java.awt.image.WritableRaster;
@@ -55,10 +56,11 @@ public class DefaultFeedback implements Feedback {
 	 * 
 	 * @param testImage the image to score
 	 * @param previousScore the score of the generated image from which this image was created
+	 * @param changedArea the area of changed between the parent generated image and this one
 	 * 
 	 * @return a score that represents its closeness to ideal
 	 */
-	public Score calculateScore(BufferedImage testImage, Score previousScore) {
+	public Score calculateScore(BufferedImage testImage, Score previousScore, Rectangle changedArea) {
 		WritableRaster raster = testImage.getRaster();
 		DataBufferByte dbb = (DataBufferByte)raster.getDataBuffer();
 		byte[] testBuffer = dbb.getData();

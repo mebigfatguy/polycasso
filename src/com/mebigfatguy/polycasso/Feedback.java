@@ -18,6 +18,7 @@
  */
 package com.mebigfatguy.polycasso;
 
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 
 /**
@@ -37,8 +38,9 @@ public interface Feedback {
      * 
      * @param testImage the generated image to test
      * @param sourceScore the score of the parent test image from which this test image was generated
+     * @param changedArea the area of changed between the parent generated image and this one
      * 
      * @return the score of this generated image
      */
-    Score calculateScore(BufferedImage testImage, Score sourceScore);
+    Score calculateScore(BufferedImage testImage, Score sourceScore, Rectangle changedArea);
 }
