@@ -166,8 +166,9 @@ public class Improver {
 				Polygon polygon = pd.getPolygon();
 				int movePos = r.nextInt(polygon.npoints);
 				int maxMovement = settings.getMaxPtMovement();
-				int moveX = r.nextInt(maxMovement * 2) - maxMovement;
-				int moveY = r.nextInt(maxMovement * 2) - maxMovement;
+				int dblMax = maxMovement << 1;
+				int moveX = r.nextInt(dblMax) - maxMovement;
+				int moveY = r.nextInt(dblMax) - maxMovement;
 				polygon.xpoints[movePos] += moveX;
 				polygon.ypoints[movePos] += moveY;
 				clipToRange(0, imageSize.width, polygon.xpoints[movePos]);				
