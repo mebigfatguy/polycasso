@@ -18,27 +18,14 @@
  */
 package com.mebigfatguy.polycasso;
 
-import java.awt.image.BufferedImage;
-
 /**
- * an immutable calculater of a generated images score compared to a target image
+ * the score of an generated image compared to the target image
  */
-public interface Feedback {
-
+public interface Score {
     /**
-     * sets the target image to compare against
-     * @param targetImage the real target image
-     */
-    void setTargetImage(BufferedImage targetImage);
-    
-    /**
-     * calculates the score of a generated image against a target image, as 
-     * the sum of the square of the pixel error
+     * returns the square of the sum of errors of all pixels
      * 
-     * @param testImage the generated image to test
-     * @param sourceScore the score of the parent test image from which this test image was generated
-     * 
-     * @return the score of this generated image
+     * @return the pixel error
      */
-    Score calculateScore(BufferedImage testImage, Score sourceScore);
+    long getDelta();
 }

@@ -38,33 +38,34 @@ public class GenerationHandler implements Serializable {
 	 */
 	public static class Member implements Comparable<Member> {
 		
-		long score;
+	    Score score;
 		PolygonData[] data;
 		
-		Member(long polyScore, PolygonData[] polyData) {
+		Member(Score polyScore, PolygonData[] polyData) {
 			score = polyScore;
 			data = polyData;
 		}
 
 		@Override
 		public int compareTo(Member o) {
-			if (score > o.score)
-				return 1;
-			else if (score < o.score)
-				return -1;
+		    long delta = score.getDelta() - o.score.getDelta();
+		    if (delta > 0)
+		        return 1;
+		    else if (delta < 0)
+		        return -1;
 			
 			return data.length - o.data.length;
 		}
 		
 		@Override
 		public int hashCode() {
-			return (int)score * 1000;
+			return score.hashCode();
 		}
 		
 		@Override
 		public boolean equals(Object o) {
 			if (o instanceof Member) {
-				return score == ((Member)o).score;
+				return score.getDelta() == ((Member)o).score.getDelta();
 			}
 			return false;
 		}
@@ -95,7 +96,7 @@ public class GenerationHandler implements Serializable {
 		random = new Random();
 		generationNumber = 0;
 		settings = confSettings;
-		bestMember = new Member(Long.MAX_VALUE, new PolygonData[0]);
+		bestMember = new Member(DefaultScore.MAX_SCORE, new PolygonData[0]);
 		eliteCutOff = Long.MAX_VALUE;
 		generation = new ArrayList<Member>(settings.getGenerationSize() + 10);
 		annealingValue = settings.getStartTemperature() * settings.getStartTemperature() * imageSize.height * imageSize.width;
@@ -112,7 +113,7 @@ public class GenerationHandler implements Serializable {
 	 * 
 	 * @return whether this is the best polygon set so far
 	 */
-	public ImprovementResult addPolygonData(long score, PolygonData[] polygonData) {		
+	public ImprovementResult addPolygonData(Score score, PolygonData[] polygonData) {		
 		synchronized(generation) {
 			Member newMember = new Member(score, polygonData);
 			generation.add(newMember);
@@ -121,11 +122,11 @@ public class GenerationHandler implements Serializable {
 			} else {
 				Collections.sort(generation);
 			}
-			if (score < bestMember.score) {
+			if (score.getDelta() < bestMember.score.getDelta()) {
 				bestMember = newMember;
 				generationBests++;
 				return ImprovementResult.BEST;
-			} else if (score < eliteCutOff) {
+			} else if (score.getDelta() < eliteCutOff) {
 				generationElites++;
 				return ImprovementResult.ELITE;
 			}
@@ -186,7 +187,7 @@ public class GenerationHandler implements Serializable {
     		    int candidateIndex = random.nextInt(sz - eliteSize) + eliteSize;
     		    Member candidate = generation.get(candidateIndex);
     		    Member elite = generation.get(i);
-    		    long delta = candidate.score - elite.score;
+    		    long delta = candidate.score.getDelta() - elite.score.getDelta();
     		    if (delta < annealingValue) {
     		        nextGeneration.set(i, candidate);
     	            if (Polycasso.DEBUG) {
@@ -202,7 +203,7 @@ public class GenerationHandler implements Serializable {
 		
 		generation = nextGeneration;
 		
-		eliteCutOff = generation.get(eliteSize-1).score;
+		eliteCutOff = generation.get(eliteSize-1).score.getDelta();
         
         if (Polycasso.DEBUG) {
         	System.out.println("Generation " + generationNumber + " had " + generationBests + " bests and " + generationElites + " elites. Best Score: " + generation.get(0).score);
