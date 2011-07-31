@@ -268,23 +268,24 @@ public class Improver {
 				Color color = pd.getColor();
 				int comp = r.nextInt(3);
 				int maxChange = settings.getMaxColorChange();
+				int dblChange = maxChange << 1;
 				switch (comp) {
 					case 0: {
-						int newColor = color.getRed() + (r.nextInt(2 * maxChange) - maxChange);
+						int newColor = color.getRed() + (r.nextInt(dblChange) - maxChange);
 						newColor = clipToRange(0, 255, newColor);
 						pd.setColor(new Color(newColor, color.getGreen(), color.getBlue()));
 					}
 					break;
 					
 					case 1: {
-						int newColor = color.getGreen() + (r.nextInt(2 * maxChange) - maxChange);
+						int newColor = color.getGreen() + (r.nextInt(dblChange) - maxChange);
 						newColor = clipToRange(0, 255, newColor);
 						pd.setColor(new Color(color.getRed(), newColor, color.getBlue()));
 					}
 					break;
 					
 					case 2: {
-						int newColor = color.getBlue() + (r.nextInt(2 * maxChange) - maxChange);
+						int newColor = color.getBlue() + (r.nextInt(dblChange) - maxChange);
 						newColor = clipToRange(0, 255, newColor);
 						pd.setColor(new Color(color.getRed(), color.getGreen(), newColor));
 					}
