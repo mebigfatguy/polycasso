@@ -21,7 +21,6 @@ package com.mebigfatguy.polycasso;
 import java.awt.Dimension;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
@@ -33,55 +32,12 @@ public class GenerationHandler implements Serializable {
 	
 	private static final long serialVersionUID = 2375492293685052783L;
 
-    /**
-	 * class that holds a sample set of polygons and it's score
-	 */
-	public static class Member implements Comparable<Member> {
-		
-	    Score score;
-		PolygonData[] data;
-		
-		Member(Score polyScore, PolygonData[] polyData) {
-			score = polyScore;
-			data = polyData;
-		}
-
-		@Override
-		public int compareTo(Member o) {
-		    long delta = score.getDelta() - o.score.getDelta();
-		    if (delta > 0)
-		        return 1;
-		    else if (delta < 0)
-		        return -1;
-			
-			return data.length - o.data.length;
-		}
-		
-		@Override
-		public int hashCode() {
-			return score.hashCode();
-		}
-		
-		@Override
-		public boolean equals(Object o) {
-			if (o instanceof Member) {
-				return score.getDelta() == ((Member)o).score.getDelta();
-			}
-			return false;
-		}
-		
-		@Override
-		public String toString() {
-			return "(" + score + ": " + Arrays.toString(data) + ")";
-		}
-	}
-	
-	private List<Member> generation;
+    private List<GenerationMember> generation;
 	private Random random;
 	private Settings settings;
 	private int generationNumber;
 	private double annealingValue;
-	private Member bestMember;
+	private GenerationMember bestMember;
 	private double eliteCutOff;
 	private int generationBests;
 	private int generationElites;
@@ -96,9 +52,9 @@ public class GenerationHandler implements Serializable {
 		random = new Random();
 		generationNumber = 0;
 		settings = confSettings;
-		bestMember = new Member(DefaultScore.MAX_SCORE, new PolygonData[0]);
+		bestMember = new GenerationMember(DefaultScore.MAX_SCORE, new PolygonData[0]);
 		eliteCutOff = Long.MAX_VALUE;
-		generation = new ArrayList<Member>(settings.getGenerationSize() + 10);
+		generation = new ArrayList<GenerationMember>(settings.getGenerationSize() + 10);
 		annealingValue = settings.getStartTemperature() * settings.getStartTemperature() * imageSize.height * imageSize.width;
 		generationBests = 0;
 		generationElites = 0;
@@ -115,7 +71,7 @@ public class GenerationHandler implements Serializable {
 	 */
 	public ImprovementResult addPolygonData(Score score, PolygonData[] polygonData) {		
 		synchronized(generation) {
-			Member newMember = new Member(score, polygonData);
+			GenerationMember newMember = new GenerationMember(score, polygonData);
 			generation.add(newMember);
 			if (generation.size() >= settings.getGenerationSize()) {
 				processGeneration();
@@ -162,7 +118,7 @@ public class GenerationHandler implements Serializable {
 	 * 
 	 * @return the best polygon set
 	 */
-	public Member getBestMember() {
+	public GenerationMember getBestMember() {
 		synchronized(generation) {
 			return bestMember;
 		}
@@ -171,10 +127,10 @@ public class GenerationHandler implements Serializable {
 	private void processGeneration() {
 		int eliteSize = settings.getEliteSize();
 		
-		Collections.<GenerationHandler.Member>sort(generation);
+		Collections.<GenerationMember>sort(generation);
 		int sz = generation.size();
 		
-		List<Member> nextGeneration = new ArrayList<Member>(settings.getGenerationSize() + 10);
+		List<GenerationMember> nextGeneration = new ArrayList<GenerationMember>(settings.getGenerationSize() + 10);
 		for (int i = 0; i < eliteSize; i++) {
 			nextGeneration.add(generation.get(i));
 		}
@@ -185,8 +141,8 @@ public class GenerationHandler implements Serializable {
 		    /* always keep the best, so start at 1 */
     		for (int i = 1; i < eliteSize; i++) {
     		    int candidateIndex = random.nextInt(sz - eliteSize) + eliteSize;
-    		    Member candidate = generation.get(candidateIndex);
-    		    Member elite = generation.get(i);
+    		    GenerationMember candidate = generation.get(candidateIndex);
+    		    GenerationMember elite = generation.get(i);
     		    long delta = candidate.score.getDelta() - elite.score.getDelta();
     		    if (delta < annealingValue) {
     		        nextGeneration.set(i, candidate);
