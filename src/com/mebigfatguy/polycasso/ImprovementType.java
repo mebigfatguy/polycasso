@@ -74,11 +74,11 @@ public enum ImprovementType {
 	 * adjust the transparency of a random existing polygon
 	 */
 	ChangeAlpha, 
-	/*
+	/**
 	 * change the color to white
 	 */
 	White,
-	/*
+	/**
 	 * change the color to black
 	 */
 	Black,
