@@ -176,7 +176,8 @@ public class GenerationHandler {
 		}
 		
 		if (settings.isUseAnnealing() && (annealingValue > 0.01)) {
-		    int annealingReplacements = 0;
+            int annealingReplacements = 0;
+            
 		    /* always keep the best, so start at 1 */
     		for (int i = 1; i < eliteSize; i++) {
     		    int candidateIndex = random.nextInt(sz - eliteSize) + eliteSize;
@@ -185,7 +186,9 @@ public class GenerationHandler {
     		    long delta = candidate.score - elite.score;
     		    if (delta < annealingValue) {
     		        nextGeneration.set(i, candidate);
-    		        annealingReplacements++;
+    	            if (Polycasso.DEBUG) {
+    	                annealingReplacements++;
+    	            }
     		    }
     		}
     		
