@@ -39,6 +39,7 @@ public class Improver {
 	private Random r;
 	private List<PolygonData> polygons = null;
 	private Rectangle changedArea;
+	private GenerationMember changedMember;
 	private ImprovementTypeStats stats;
 	
 	/**
@@ -81,11 +82,10 @@ public class Improver {
 	 * @return the improvement type used to alter the data
 	 */
 	public ImprovementType improveRandomly() {
-
 		{
-			PolygonData[] randomData = generationHandler.getRandomPolygonData(false);
-			if (randomData != null)
-				polygons = new ArrayList<PolygonData>(Arrays.asList(randomData.clone()));
+		    changedMember = generationHandler.getRandomMember(false);
+			if (changedMember != null)
+				polygons = new ArrayList<PolygonData>(Arrays.asList(changedMember.data.clone()));
 			else
 				polygons = new ArrayList<PolygonData>();
 		}
@@ -342,10 +342,11 @@ public class Improver {
 			break;
 			
 			case Breed: {
-				PolygonData[] copyData = generationHandler.getRandomPolygonData(false);
-				if ((copyData == null) || (copyData.length == 0)) {
+				GenerationMember copyMember = generationHandler.getRandomMember(false);
+				if ((copyMember == null) || (copyMember.data.length == 0)) {
 					randomCompleteChange();
 				} else {
+				    PolygonData[] copyData = copyMember.data;
 					idx = r.nextInt(copyData.length); 
 					if (idx >= polygons.size()) {
 						polygons.add(copyData[idx]);
@@ -360,10 +361,11 @@ public class Improver {
 			break;
 			
 			case BreedElite: {
-				PolygonData[] copyData = generationHandler.getRandomPolygonData(true);
-				if ((copyData == null) || (copyData.length == 0)) {
+			    GenerationMember copyMember = generationHandler.getRandomMember(true);
+				if ((copyMember == null) || (copyMember.data.length == 0)) {
 					randomCompleteChange();
 				} else {
+                    PolygonData[] copyData = copyMember.data;
 					idx = r.nextInt(copyData.length); 
 					if (idx >= polygons.size()) {
 						polygons.add(copyData[idx]);
@@ -384,6 +386,15 @@ public class Improver {
 		}
 		
 		return type;
+	}
+	
+	/**
+	 * returns the member image from which this generated image was created
+	 * 
+	 * @return the parent generated image member
+	 */
+	public GenerationMember getParentGenerationMember() {
+	    return changedMember;
 	}
 	
 	/**

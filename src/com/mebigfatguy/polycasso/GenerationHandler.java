@@ -92,25 +92,25 @@ public class GenerationHandler implements Serializable {
 	}
 	
 	/**
-	 * pick a random polygon sample either from the general pool or elite pool
-	 * skew the results towards the elite
-	 * 
-	 * @param elite whether to pick from the elite pool or not
-	 * @return a random polygon set
-	 */
-	public PolygonData[] getRandomPolygonData(boolean elite) {
-		synchronized(generation) {
-			int size = elite ? (settings.getEliteSize() % generation.size()) : generation.size();
+     * pick a random member either from the general pool or elite pool
+     * skew the results towards the elite
+     * 
+     * @param elite whether to pick from the elite pool or not
+     * @return a random member
+     */
+	public GenerationMember getRandomMember(boolean elite) {
+	       synchronized(generation) {
+	            int size = elite ? (settings.getEliteSize() % generation.size()) : generation.size();
 
-			if (size == 0)
-				return null;
-			
-			int r = random.nextInt(size);
-			
-			int idx = (int)(r * ((double) r / (double) size));
-			
-			return generation.get(idx).data;
-		}
+	            if (size == 0)
+	                return null;
+	            
+	            int r = random.nextInt(size);
+	            
+	            int idx = (int)(r * ((double) r / (double) size));
+	            
+	            return generation.get(idx);
+	        }
 	}
 	
 	/**
