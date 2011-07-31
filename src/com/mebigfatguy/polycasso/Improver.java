@@ -114,7 +114,7 @@ public class Improver {
 				int idx = r.nextInt(polygons.size());
 				PolygonData pd = (PolygonData)polygons.get(idx).clone();
 				Polygon polygon = pd.getPolygon();
-				if (polygon.npoints <= settings.getMaxPoints()) {
+				if (polygon.npoints < settings.getMaxPoints()) {
 					polygon.addPoint(0, 0);
 					int insPos = r.nextInt(polygon.npoints);
 					int lastPt = (insPos + polygon.npoints - 1) % polygon.npoints;
