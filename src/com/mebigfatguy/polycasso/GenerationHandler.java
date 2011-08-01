@@ -78,7 +78,7 @@ public class GenerationHandler implements Serializable {
 			} else {
 				Collections.sort(generation);
 			}
-			if (score.getDelta() < bestMember.score.getDelta()) {
+			if (score.getDelta() < bestMember.getScore().getDelta()) {
 				bestMember = newMember;
 				generationBests++;
 				return ImprovementResult.BEST;
@@ -143,7 +143,7 @@ public class GenerationHandler implements Serializable {
     		    int candidateIndex = random.nextInt(sz - eliteSize) + eliteSize;
     		    GenerationMember candidate = generation.get(candidateIndex);
     		    GenerationMember elite = generation.get(i);
-    		    long delta = candidate.score.getDelta() - elite.score.getDelta();
+    		    long delta = candidate.getScore().getDelta() - elite.getScore().getDelta();
     		    if (delta < annealingValue) {
     		        nextGeneration.set(i, candidate);
     	            if (Polycasso.DEBUG) {
@@ -159,10 +159,10 @@ public class GenerationHandler implements Serializable {
 		
 		generation = nextGeneration;
 		
-		eliteCutOff = generation.get(eliteSize-1).score.getDelta();
+		eliteCutOff = generation.get(eliteSize-1).getScore().getDelta();
         
         if (Polycasso.DEBUG) {
-        	System.out.println("Generation " + generationNumber + " had " + generationBests + " bests and " + generationElites + " elites. Best Score: " + generation.get(0).score);
+        	System.out.println("Generation " + generationNumber + " had " + generationBests + " bests and " + generationElites + " elites. Best Score: " + generation.get(0).getScore());
         }
         generationBests = 0;
         generationElites = 0;

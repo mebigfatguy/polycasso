@@ -166,7 +166,7 @@ public class DefaultImageGenerator implements ImageGenerator, Runnable {
 			if (t != null) {
 				stopGenerating();
 				t = new Thread[1];
-				t[0] = new Thread(new ImageCompleter(this, targetImage, generationHandler.getBestMember().data, imageSize));
+				t[0] = new Thread(new ImageCompleter(this, targetImage, generationHandler.getBestMember().getData(), imageSize));
 				t[0].start();
 			}
 		}
@@ -178,7 +178,7 @@ public class DefaultImageGenerator implements ImageGenerator, Runnable {
 	 * @return the best set of polygons
 	 */
 	public PolygonData[] getBestData() {
-		return generationHandler.getBestMember().data;
+		return generationHandler.getBestMember().getData();
 	}
 	/**
 	 * the runnable interface implementation to repeatedly improve upon the image and check to 
@@ -199,7 +199,8 @@ public class DefaultImageGenerator implements ImageGenerator, Runnable {
     				List<PolygonData> data = improver.getData();
     				imagePolygonData(g2d, data, srcOpaque);
     
-    				Score delta = feedback.calculateScore(image, null, improver.getChangedArea());
+    				GenerationMember parentMember = improver.getParentGenerationMember();
+    				Score delta = feedback.calculateScore(image, (parentMember != null) ? parentMember.getScore() : null, improver.getChangedArea());
     				
     				boolean wasSuccessful;
     				

@@ -85,7 +85,7 @@ public class Improver {
 		{
 		    changedMember = generationHandler.getRandomMember(false);
 			if (changedMember != null)
-				polygons = new ArrayList<PolygonData>(Arrays.asList(changedMember.data.clone()));
+				polygons = new ArrayList<PolygonData>(Arrays.asList(changedMember.getData().clone()));
 			else
 				polygons = new ArrayList<PolygonData>();
 		}
@@ -343,10 +343,10 @@ public class Improver {
 			
 			case Breed: {
 				GenerationMember copyMember = generationHandler.getRandomMember(false);
-				if ((copyMember == null) || (copyMember.data.length == 0)) {
+				if ((copyMember == null) || (copyMember.getData().length == 0)) {
 					randomCompleteChange();
 				} else {
-				    PolygonData[] copyData = copyMember.data;
+				    PolygonData[] copyData = copyMember.getData();
 					idx = r.nextInt(copyData.length); 
 					if (idx >= polygons.size()) {
 						polygons.add(copyData[idx]);
@@ -362,10 +362,10 @@ public class Improver {
 			
 			case BreedElite: {
 			    GenerationMember copyMember = generationHandler.getRandomMember(true);
-				if ((copyMember == null) || (copyMember.data.length == 0)) {
+				if ((copyMember == null) || (copyMember.getData().length == 0)) {
 					randomCompleteChange();
 				} else {
-                    PolygonData[] copyData = copyMember.data;
+                    PolygonData[] copyData = copyMember.getData();
 					idx = r.nextInt(copyData.length); 
 					if (idx >= polygons.size()) {
 						polygons.add(copyData[idx]);

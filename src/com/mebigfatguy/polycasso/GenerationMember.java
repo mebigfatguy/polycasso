@@ -25,12 +25,29 @@ import java.util.Arrays;
  */
 public class GenerationMember implements Comparable<GenerationMember> {
 	
-    Score score;
-	PolygonData[] data;
+    private Score score;
+    private PolygonData[] data;
 	
 	GenerationMember(Score polyScore, PolygonData[] polyData) {
 		score = polyScore;
 		data = polyData;
+	}
+	
+	/**
+	 * returns the score for this member
+	 * @return the score
+	 */
+	public Score getScore() {
+	    return score;
+	}
+
+	/**
+	 * returns the polygon data for this member
+	 *
+	 * @return the polygon data
+	 */
+	public PolygonData[] getData() {
+	    return data;
 	}
 
 	@Override
