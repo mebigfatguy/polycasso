@@ -61,6 +61,9 @@ public class DefaultFeedback implements Feedback {
 	 * @return a score that represents its closeness to ideal
 	 */
 	public Score calculateScore(BufferedImage testImage, Score previousScore, Rectangle changedArea) {
+	    
+	    DefaultScore score = (previousScore != null) ? (DefaultScore)previousScore.clone() : new DefaultScore();
+	    
 		WritableRaster raster = testImage.getRaster();
 		DataBufferByte dbb = (DataBufferByte)raster.getDataBuffer();
 		byte[] testBuffer = dbb.getData();
@@ -86,8 +89,8 @@ public class DefaultFeedback implements Feedback {
 			
 			error += redError + greenError  + blueError;
 		}
-		
-		DefaultScore score = new DefaultScore(error);
+
+		score.overallScore = error;
 		return score;
 	}
 }

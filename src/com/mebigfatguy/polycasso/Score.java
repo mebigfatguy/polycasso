@@ -21,11 +21,18 @@ package com.mebigfatguy.polycasso;
 /**
  * the score of an generated image compared to the target image
  */
-public interface Score {
+public interface Score extends Cloneable {
     /**
      * returns the square of the sum of errors of all pixels
      * 
      * @return the pixel error
      */
     long getDelta();
+    
+    /**
+     * clones this score
+     * 
+     * @return a clone of this score
+     */
+    Object clone();
 }
