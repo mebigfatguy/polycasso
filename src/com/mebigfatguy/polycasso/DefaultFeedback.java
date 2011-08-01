@@ -29,7 +29,7 @@ import java.awt.image.WritableRaster;
 public class DefaultFeedback implements Feedback {
 
 	private byte[] targetBuffer;
-	private int size;
+	private int width, height;
 	
 	/**
 	 * creates a feedback object with a given targetImage. Caches the image bytes in 
@@ -45,9 +45,10 @@ public class DefaultFeedback implements Feedback {
      */
 	public void setTargetImage(BufferedImage targetImage) {
         WritableRaster raster = targetImage.getRaster();
+        width = targetImage.getWidth();
+        height = targetImage.getHeight();
         DataBufferByte dbb = (DataBufferByte)raster.getDataBuffer();
         targetBuffer = dbb.getData();
-        size = dbb.getSize();
 	}
 	
 	/**
@@ -68,29 +69,60 @@ public class DefaultFeedback implements Feedback {
 		DataBufferByte dbb = (DataBufferByte)raster.getDataBuffer();
 		byte[] testBuffer = dbb.getData();
 		
-		long error = 0L;
-		
-		//index 0 is alpha, start at 1 (blue)
-		for (int i = 1; i < size; i++) {
-			int blue1 = targetBuffer[i] & 0x0FF;
-			int blue2 = testBuffer[i++] & 0x0FF;
-			long blueError = blue1 - blue2;
-			blueError *= blueError;
-			
-			int green1 = targetBuffer[i] & 0x0FF;
-			int green2 = testBuffer[i++] & 0x0FF;
-			long greenError = green1 - green2;
-			greenError *= greenError;
-			
-			int red1 = targetBuffer[i] & 0x0FF;
-			int red2 = testBuffer[i++] & 0x0FF;
-			long redError = red1 - red2;
-			redError *= redError;
-			
-			error += redError + greenError  + blueError;
+        Rectangle gridRect = new Rectangle();
+        score.overallScore = 0L;
+        
+		for (int y = 0; y < DefaultScore.NUM_DIVISIONS; y++) {
+            gridRect.y = y * (height / DefaultScore.NUM_DIVISIONS);
+            if (y < (DefaultScore.NUM_DIVISIONS - 1)) {
+                gridRect.height = height / DefaultScore.NUM_DIVISIONS;
+		    } else {
+		        gridRect.height = height - gridRect.y;
+		    }
+		    
+		    for (int x = 0; x < DefaultScore.NUM_DIVISIONS; x++) {
+		        gridRect.x = x * (width / DefaultScore.NUM_DIVISIONS);
+		        if (x < (DefaultScore.NUM_DIVISIONS - 1)) {
+		            gridRect.width = width / DefaultScore.NUM_DIVISIONS;
+		        } else {
+		            gridRect.width = width - gridRect.x;
+		        }
+		        
+		        if ((changedArea == null) || changedArea.intersects(gridRect)) {
+    		        
+		            long gridError = 0L;
+    		        for (int gy = gridRect.y; gy < gridRect.y + gridRect.height; gy++) {
+                        int pixelStart = (gy * width * 4) + (gridRect.x * 4);
+                        int pixelEnd = pixelStart + gridRect.width * 4;
+                        
+	                    //index 0 is alpha, start at 1 (blue)
+	                    for (int i = pixelStart + 1; i < pixelEnd; i++) {
+	                        int blue1 = targetBuffer[i] & 0x0FF;
+	                        int blue2 = testBuffer[i++] & 0x0FF;
+	                        long blueError = blue1 - blue2;
+	                        blueError *= blueError;
+	                        
+	                        int green1 = targetBuffer[i] & 0x0FF;
+	                        int green2 = testBuffer[i++] & 0x0FF;
+	                        long greenError = green1 - green2;
+	                        greenError *= greenError;
+	                        
+	                        int red1 = targetBuffer[i] & 0x0FF;
+	                        int red2 = testBuffer[i++] & 0x0FF;
+	                        long redError = red1 - red2;
+	                        redError *= redError;
+	                        
+	                        gridError += redError + greenError  + blueError;
+	                    }
+    		        }
+    		        score.gridScores[x][y] = gridError; 
+    		        score.overallScore += gridError;
+		        } else {
+		            score.overallScore += score.gridScores[x][y];
+		        }
+		    }
 		}
 
-		score.overallScore = error;
 		return score;
 	}
 }

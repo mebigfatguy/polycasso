@@ -7,7 +7,7 @@ package com.mebigfatguy.polycasso;
  */
 public class DefaultScore implements Score {
     
-    private static final int NUM_DIVISIONS = 4;
+    static final int NUM_DIVISIONS = 4;
     
     /**
      * a worst case score
@@ -71,16 +71,21 @@ public class DefaultScore implements Score {
      */
     @Override
     public Object clone() {
+        DefaultScore clonedScore;
+        
         try {
-            DefaultScore clonedScore = (DefaultScore) super.clone();
-            clonedScore.gridScores = gridScores.clone();
-            return clonedScore;
+            clonedScore = (DefaultScore) super.clone();
         } catch (CloneNotSupportedException cnse) {
-            DefaultScore clonedScore = new DefaultScore();
+            clonedScore = new DefaultScore();
             clonedScore.overallScore = overallScore;
-            clonedScore.gridScores = gridScores.clone();
-            return clonedScore;
         }
+        
+        clonedScore.gridScores = new long[NUM_DIVISIONS][NUM_DIVISIONS];
+        for (int i = 0; i < NUM_DIVISIONS; i++) {
+            System.arraycopy(gridScores[i], 0, clonedScore.gridScores[i], 0, NUM_DIVISIONS);
+        }
+        
+        return clonedScore;
     }
     
     /**
