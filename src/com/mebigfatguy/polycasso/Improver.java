@@ -82,13 +82,11 @@ public class Improver {
 	 * @return the improvement type used to alter the data
 	 */
 	public ImprovementType improveRandomly() {
-		{
-		    changedMember = generationHandler.getRandomMember(false);
-			if (changedMember != null)
-				polygons = new ArrayList<PolygonData>(Arrays.asList(changedMember.getData().clone()));
-			else
-				polygons = new ArrayList<PolygonData>();
-		}
+	    changedMember = generationHandler.getRandomMember(false);
+		if (changedMember != null)
+			polygons = new ArrayList<PolygonData>(Arrays.asList(changedMember.getData().clone()));
+		else
+			polygons = new ArrayList<PolygonData>();
 		
 		ImprovementType type = (polygons.isEmpty()) ? ImprovementType.AddPolygon : stats.getRandomImprovementType();
 		
@@ -134,6 +132,7 @@ public class Improver {
 					polygon.xpoints[insPos] = x;
 					System.arraycopy(polygon.ypoints, insPos, polygon.ypoints, insPos + 1, numCopyPts);
 					polygon.ypoints[insPos] = y;
+					polygon.invalidate();
 					changedArea.union(polygon.getBounds());
 					polygons.set(idx, pd);
 					
@@ -157,7 +156,8 @@ public class Improver {
 					System.arraycopy(polygon.xpoints, delPos+1, polygon.xpoints, delPos, numPtCopy);
 					System.arraycopy(polygon.ypoints, delPos+1, polygon.ypoints, delPos, numPtCopy);
 					polygon.npoints--;
-					changedArea.union(polygon.getBounds());
+                    polygon.invalidate();
+                    changedArea.union(polygon.getBounds());
 					polygons.set(idx, pd);
 				} else {
 					randomCompleteChange();
@@ -181,6 +181,7 @@ public class Improver {
 				polygon.ypoints[movePos] += moveY;
 				clipToRange(0, imageSize.width, polygon.xpoints[movePos]);				
 				clipToRange(0, imageSize.height, polygon.ypoints[movePos]);
+                polygon.invalidate();
 				changedArea.union(polygon.getBounds());
 				polygons.set(idx, pd);
 			}
@@ -200,6 +201,7 @@ public class Improver {
 				} else {
 					polygon.ypoints[rectifyPos] = polygon.ypoints[targetPos];
 				}
+                polygon.invalidate();
 				changedArea.union(polygon.getBounds());
 				polygons.set(idx, pd);
 			}
@@ -233,6 +235,7 @@ public class Improver {
 					polygon.xpoints[i] += (polygon.xpoints[i] < midX) ? shrinkFactor : -shrinkFactor;
 					polygon.ypoints[i] += (polygon.ypoints[i] < midY) ? shrinkFactor : -shrinkFactor;
 				}
+                polygon.invalidate();
 				changedArea.union(polygon.getBounds());
 				polygons.set(idx, pd);
 			}
@@ -254,6 +257,7 @@ public class Improver {
 					polygon.xpoints[i] = clipToRange(0, imageSize.width, polygon.xpoints[i]);
 					polygon.ypoints[i] = clipToRange(0, imageSize.height, polygon.ypoints[i]);
 				}	
+                polygon.invalidate();
 				changedArea.union(polygon.getBounds());
 				polygons.set(idx, pd);
 			}
@@ -274,6 +278,7 @@ public class Improver {
 					polygon.xpoints[i] = clipToRange(0, imageSize.width, polygon.xpoints[i]);
 					polygon.ypoints[i] = clipToRange(0, imageSize.height, polygon.ypoints[i]);
 				}	
+                polygon.invalidate();
 				changedArea.union(polygon.getBounds());
 				polygons.set(idx, pd);
 			}
