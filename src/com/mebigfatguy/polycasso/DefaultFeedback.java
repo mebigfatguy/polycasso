@@ -4,17 +4,17 @@
  * Copyright 2009-2011 Dave Brosius
  * Inspired by work by Roger Alsing
  * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
- * You may obtain a copy of the License at 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- *    http://www.apache.org/licenses/LICENSE-2.0 
- *    
- * Unless required by applicable law or agreed to in writing, 
- * software distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
- * See the License for the specific language governing permissions and limitations 
- * under the License. 
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and limitations
+ * under the License.
  */
 package com.mebigfatguy.polycasso;
 
@@ -28,108 +28,113 @@ import java.awt.image.WritableRaster;
  */
 public class DefaultFeedback implements Feedback {
 
-	private byte[] targetBuffer;
-	private int width, height;
-	
-	/**
-	 * creates a feedback object with a given targetImage. Caches the image bytes in 
-	 * member variables.
-	 */
-	public DefaultFeedback() {
-	}
-	
-	/**
-	 * caches information about the target image
+    private byte[] targetBuffer;
+    private int width, height;
+
+    /**
+     * creates a feedback object with a given targetImage. Caches the image bytes in
+     * member variables.
+     */
+    public DefaultFeedback() {
+    }
+
+    /**
+     * caches information about the target image
      * 
      * @param targetImage the target image that will be the judge of test images
      */
-	public void setTargetImage(BufferedImage targetImage) {
+    @Override
+    public void setTargetImage(BufferedImage targetImage) {
         WritableRaster raster = targetImage.getRaster();
         width = targetImage.getWidth();
         height = targetImage.getHeight();
         DataBufferByte dbb = (DataBufferByte)raster.getDataBuffer();
         targetBuffer = dbb.getData();
-	}
-	
-	/**
-	 * returns a score of how close the test image is to the target
-	 * which is the square of the error to the target image
-	 * 
-	 * @param testImage the image to score
-	 * @param previousScore the score of the generated image from which this image was created
-	 * @param changedArea the area of changed between the parent generated image and this one
-	 * 
-	 * @return a score that represents its closeness to ideal
-	 */
-	public Score calculateScore(BufferedImage testImage, Score previousScore, Rectangle changedArea) {
-	    
-	    DefaultScore score = (previousScore != null) ? (DefaultScore)previousScore.clone() : new DefaultScore();
-	    
-		WritableRaster raster = testImage.getRaster();
-		DataBufferByte dbb = (DataBufferByte)raster.getDataBuffer();
-		byte[] testBuffer = dbb.getData();
-		
+    }
+
+    /**
+     * returns a score of how close the test image is to the target
+     * which is the square of the error to the target image
+     * 
+     * @param testImage the image to score
+     * @param previousScore the score of the generated image from which this image was created
+     * @param changedArea the area of changed between the parent generated image and this one
+     * 
+     * @return a score that represents its closeness to ideal
+     */
+    @Override
+    public Score calculateScore(BufferedImage testImage, Score previousScore, Rectangle changedArea) {
+
+        DefaultScore score = (previousScore != null) ? (DefaultScore)previousScore.clone() : new DefaultScore();
+
+        WritableRaster raster = testImage.getRaster();
+        DataBufferByte dbb = (DataBufferByte)raster.getDataBuffer();
+        byte[] testBuffer = dbb.getData();
+
+        boolean needAutoRecalc = (previousScore == null) || (changedArea == null);
         score.overallScore = 0L;
-        
-		for (int y = 0; y < DefaultScore.NUM_DIVISIONS; y++) {
-            int gridTop = y * (height / DefaultScore.NUM_DIVISIONS);
+
+        for (int y = 0; y < DefaultScore.NUM_DIVISIONS; y++) {
+            int gridHeight = (height / DefaultScore.NUM_DIVISIONS);
+            int gridTop = y * gridHeight;
             int gridBottom;
             if (y < (DefaultScore.NUM_DIVISIONS - 1)) {
-                gridBottom = gridTop + height / DefaultScore.NUM_DIVISIONS;
-		    } else {
-		        gridBottom = height;
-		    }
-            
-            if ((changedArea == null) || (((changedArea.y <= gridBottom) && (changedArea.y + changedArea.height) >= gridTop))) {
-    		    for (int x = 0; x < DefaultScore.NUM_DIVISIONS; x++) {
-    		        int gridLeft = x * (width / DefaultScore.NUM_DIVISIONS);
-    		        int gridRight;
-    		        if (x < (DefaultScore.NUM_DIVISIONS - 1)) {
-    		            gridRight = gridLeft + width / DefaultScore.NUM_DIVISIONS;
-    		        } else {
-    		            gridRight = width;
-    		        }
-    		        
-    		        if ((changedArea == null) || (((changedArea.x <= gridRight) && (changedArea.x + changedArea.width) >= gridLeft))) {
-        		        
-    		            long gridError = 0L;
-        		        for (int gy = gridTop; gy < gridBottom; gy++) {
+                gridBottom = gridTop + gridHeight;
+            } else {
+                gridBottom = height;
+            }
+
+            if (needAutoRecalc || ((changedArea.y <= gridBottom) && ((changedArea.y + changedArea.height) >= gridTop))) {
+                for (int x = 0; x < DefaultScore.NUM_DIVISIONS; x++) {
+                    int gridWidth = (width / DefaultScore.NUM_DIVISIONS);
+                    int gridLeft = x * gridWidth;
+                    int gridRight;
+                    if (x < (DefaultScore.NUM_DIVISIONS - 1)) {
+                        gridRight = gridLeft + gridWidth;
+                    } else {
+                        gridRight = width;
+                    }
+
+                    if (needAutoRecalc || ((changedArea.x <= gridRight) && ((changedArea.x + changedArea.width) >= gridLeft))) {
+
+                        long gridError = 0L;
+                        for (int gy = gridTop; gy < gridBottom; gy++) {
                             int pixelStart = (gy * width * 4) + (gridLeft * 4);
                             int pixelEnd = pixelStart + (gridRight - gridLeft) * 4;
-                            
-    	                    //index 0 is alpha, start at 1 (blue)
-    	                    for (int i = pixelStart + 1; i < pixelEnd; i++) {
-    	                        int blue1 = targetBuffer[i] & 0x0FF;
-    	                        int blue2 = testBuffer[i++] & 0x0FF;
-    	                        long blueError = blue1 - blue2;
-    	                        blueError *= blueError;
-    	                        
-    	                        int green1 = targetBuffer[i] & 0x0FF;
-    	                        int green2 = testBuffer[i++] & 0x0FF;
-    	                        long greenError = green1 - green2;
-    	                        greenError *= greenError;
-    	                        
-    	                        int red1 = targetBuffer[i] & 0x0FF;
-    	                        int red2 = testBuffer[i++] & 0x0FF;
-    	                        long redError = red1 - red2;
-    	                        redError *= redError;
-    	                        
-    	                        gridError += redError + greenError  + blueError;
-    	                    }
-        		        }
-        		        score.gridScores[x][y] = gridError; 
-        		        score.overallScore += gridError;
-    		        } else {
-    		            score.overallScore += score.gridScores[x][y];
-    		        }
-    		    }
+
+                            //index 0 is alpha, start at 1 (blue)
+                            for (int i = pixelStart + 1; i < pixelEnd; i++) {
+                                int blue1 = targetBuffer[i] & 0x0FF;
+                                int blue2 = testBuffer[i++] & 0x0FF;
+                                long blueError = blue1 - blue2;
+                                blueError *= blueError;
+
+                                int green1 = targetBuffer[i] & 0x0FF;
+                                int green2 = testBuffer[i++] & 0x0FF;
+                                long greenError = green1 - green2;
+                                greenError *= greenError;
+
+                                int red1 = targetBuffer[i] & 0x0FF;
+                                int red2 = testBuffer[i++] & 0x0FF;
+                                long redError = red1 - red2;
+                                redError *= redError;
+
+                                gridError += redError + greenError  + blueError;
+                            }
+                        }
+                        score.gridScores[x][y] = gridError;
+                        score.overallScore += gridError;
+                    } else {
+                        score.overallScore += score.gridScores[x][y];
+                    }
+                }
             } else {
                 for (int x = 0; x < DefaultScore.NUM_DIVISIONS; x++) {
                     score.overallScore += score.gridScores[x][y];
                 }
             }
-		}
+        }
 
-		return score;
-	}
+        return score;
+    }
 }

@@ -29,7 +29,7 @@ import java.util.Random;
  */
 public class ImprovementTypeStats {
 	
-	private static final int MAX_FAILURE_RUN = 25;
+	private static final int MAX_FAILURE_RUN = 50;
 	private static class Stats {
 		public int successes = 1;
 		public int totals = 1;
