@@ -103,6 +103,63 @@ public class DefaultFeedbackTest {
         Assert.assertEquals(5L * ONE_COMPLETE_GRID_COLOR_DIFFERENCE, score.getDelta());
     }
 
+    @Test
+    public void testCalculateScoreWithChangeAreaTotallyLeft() {
+        BufferedImage sampleImage = buildSampleImage();
+        Score previousScore = feedBack.calculateScore(sampleImage, null, null);
+
+        Graphics g = sampleImage.getGraphics();
+        g.setColor(Color.BLUE);
+        Rectangle changedArea = new Rectangle(0, 4, 2, 8);
+        g.fillRect(changedArea.x, changedArea.y, changedArea.width, changedArea.height);
+
+        Score score = feedBack.calculateScore(sampleImage, previousScore, changedArea);
+        Assert.assertEquals(5L * ONE_COMPLETE_GRID_COLOR_DIFFERENCE, score.getDelta());
+    }
+
+    @Test
+    public void testCalculateScoreWithChangeAreaPartiallyLeft() {
+        BufferedImage sampleImage = buildSampleImage();
+        Score previousScore = feedBack.calculateScore(sampleImage, null, null);
+
+        Graphics g = sampleImage.getGraphics();
+        g.setColor(Color.BLUE);
+        Rectangle changedArea = new Rectangle(2, 4, 4, 8);
+        g.fillRect(changedArea.x, changedArea.y, changedArea.width, changedArea.height);
+
+        Score score = feedBack.calculateScore(sampleImage, previousScore, changedArea);
+        Assert.assertEquals(4L * ONE_COMPLETE_GRID_COLOR_DIFFERENCE, score.getDelta());
+    }
+
+    @Test
+    public void testCalculateScoreWithChangeAreaPartiallyRight() {
+        BufferedImage sampleImage = buildSampleImage();
+        Score previousScore = feedBack.calculateScore(sampleImage, null, null);
+
+        Graphics g = sampleImage.getGraphics();
+        g.setColor(Color.BLUE);
+        Rectangle changedArea = new Rectangle(10, 4, 4, 8);
+        g.fillRect(changedArea.x, changedArea.y, changedArea.width, changedArea.height);
+
+        Score score = feedBack.calculateScore(sampleImage, previousScore, changedArea);
+        Assert.assertEquals(4L * ONE_COMPLETE_GRID_COLOR_DIFFERENCE, score.getDelta());
+    }
+
+    @Test
+    public void testCalculateScoreWithChangeAreaTotallyRight() {
+        BufferedImage sampleImage = buildSampleImage();
+        Score previousScore = feedBack.calculateScore(sampleImage, null, null);
+
+        Graphics g = sampleImage.getGraphics();
+        g.setColor(Color.BLUE);
+        Rectangle changedArea = new Rectangle(14, 4, 2, 8);
+        g.fillRect(changedArea.x, changedArea.y, changedArea.width, changedArea.height);
+
+        Score score = feedBack.calculateScore(sampleImage, previousScore, changedArea);
+        Assert.assertEquals(5L * ONE_COMPLETE_GRID_COLOR_DIFFERENCE, score.getDelta());
+    }
+
+
     private BufferedImage buildSampleImage() {
         BufferedImage sample = new BufferedImage(16, 16, BufferedImage.TYPE_4BYTE_ABGR);
         Graphics g = sample.getGraphics();
