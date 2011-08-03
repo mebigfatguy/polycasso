@@ -62,6 +62,7 @@ public class PainterFrame extends JFrame implements ImageGeneratedListener {
     private JMenuItem quitItem;
     private JMenuItem aboutItem;
     private JMenuItem settingsItem;
+    private JMenuItem proxyItem;
     private ImageGenerator generator;
     private final Settings settings;
 
@@ -120,6 +121,8 @@ public class PainterFrame extends JFrame implements ImageGeneratedListener {
         JMenu editMenu = new JMenu(PolycassoBundle.getString(PolycassoBundle.Key.Edit));
         settingsItem = new JMenuItem(PolycassoBundle.getString(PolycassoBundle.Key.Settings));
         editMenu.add(settingsItem);
+        proxyItem = new JMenuItem(PolycassoBundle.getString(PolycassoBundle.Key.Proxy));
+        editMenu.add(proxyItem);
         mb.add(editMenu);
 
         JMenu aboutMenu = new JMenu(PolycassoBundle.getString(PolycassoBundle.Key.About));
@@ -148,7 +151,7 @@ public class PainterFrame extends JFrame implements ImageGeneratedListener {
             @Override
             public void actionPerformed(ActionEvent ae) {
                 try {
-                    Image targetImage = RandomImageFinder.findImage();
+                    Image targetImage = RandomImageFinder.findImage(settings);
                     beginGenerating(targetImage);
                 } catch (IOException ioe) {
                     JOptionPane.showMessageDialog(PainterFrame.this, ioe.getMessage());
@@ -162,7 +165,7 @@ public class PainterFrame extends JFrame implements ImageGeneratedListener {
                 try {
                     String url = JOptionPane.showInputDialog(PainterFrame.this, PolycassoBundle.getString(PolycassoBundle.Key.EnterURL));
                     if (url != null) {
-                        Image targetImage = new ImageIcon(URLFetcher.fetchURLData(url)).getImage();
+                        Image targetImage = new ImageIcon(URLFetcher.fetchURLData(url, settings.getProxyHost(), settings.getProxyPort())).getImage();
                         beginGenerating(targetImage);
                     }
                 } catch (IOException ioe) {
@@ -233,6 +236,21 @@ public class PainterFrame extends JFrame implements ImageGeneratedListener {
                     settings.setMaxPolygons(dlgSettings.getMaxPolygons());
                     settings.setMaxPoints(dlgSettings.getMaxPoints());
                     settings.setMaxPtMovement(dlgSettings.getMaxPtMovement());
+                }
+            }
+        });
+
+        proxyItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                ProxyDialog dialog = new ProxyDialog(settings);
+                dialog.setLocationRelativeTo(PainterFrame.this);
+                dialog.setModal(true);
+                dialog.setVisible(true);
+                if (dialog.isOK()) {
+                    Settings dlgSettings = dialog.getSettings();
+                    settings.setProxyHost(dlgSettings.getProxyHost());
+                    settings.setProxyPort(dlgSettings.getProxyPort());
                 }
             }
         });
