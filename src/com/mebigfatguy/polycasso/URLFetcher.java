@@ -67,7 +67,7 @@ public class URLFetcher {
                 if (proxyHost != null) {
                     proxy = new Proxy(Type.HTTP, new InetSocketAddress(proxyHost, proxyPort));
                 } else {
-                    proxy = new Proxy(Type.DIRECT, null);
+                    proxy = Proxy.NO_PROXY;
                 }
                 con = (HttpURLConnection)u.openConnection(proxy);
                 con.addRequestProperty("User-Agent", "Mozilla/4.76");
