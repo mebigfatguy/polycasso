@@ -7,7 +7,7 @@ package com.mebigfatguy.polycasso;
  */
 public class DefaultScore implements Score {
 
-    static final int NUM_DIVISIONS = 4;
+    static final int NUM_DIVISIONS = 8;
 
     /**
      * a worst case score
