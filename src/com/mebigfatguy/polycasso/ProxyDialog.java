@@ -42,6 +42,8 @@ import com.jgoodies.forms.layout.FormLayout;
  * control how urls are fetched thru a proxy.
  */
 public class ProxyDialog extends JDialog {
+    private static final long serialVersionUID = 7454644049634022854L;
+
     private final Settings dlgSettings;
     private JTextField proxyHostField;
     private JTextField proxyPortField;

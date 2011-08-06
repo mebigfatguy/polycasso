@@ -18,12 +18,15 @@
  */
 package com.mebigfatguy.polycasso;
 
+import java.io.Serializable;
 import java.util.Arrays;
 
 /**
  * class that holds a sample set of polygons and it's score
  */
-public class GenerationMember implements Comparable<GenerationMember> {
+public class GenerationMember implements Comparable<GenerationMember>, Serializable {
+
+    private static final long serialVersionUID = 3227390661297952844L;
 
     private final Score score;
     private final PolygonData[] data;

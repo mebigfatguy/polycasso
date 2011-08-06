@@ -76,12 +76,15 @@ public class DefaultFeedback implements Feedback {
             score = calculateXMajorScore(testBuffer, previousScore, changedArea);
         }
 
-        if ((changedArea != null) && (Math.random() < 0.05)) {
-            long realScore = calculateGridScore(testBuffer, 0, 0, width, height);
-            if (realScore != score.getDelta()) {
-                System.out.println("ERROR: Real: " + realScore + " calc: " + score.getDelta());
-            }
-        }
+        //        if (Math.random() < 0.05) {
+        //            long realScore = calculateGridScore(testBuffer, 0, 0, width, height);
+        //            if (realScore != score.getDelta()) {
+        //                System.out.println("ERROR: Real: " + realScore + " calc: " + score.getDelta());
+        //                Score s = calculateYMajorScore(testBuffer, null, null);
+        //                System.out.println("Full Recalc: " + s.getDelta());
+        //                calculateScore(testImage, previousScore, changedArea);
+        //            }
+        //        }
 
         return score;
 

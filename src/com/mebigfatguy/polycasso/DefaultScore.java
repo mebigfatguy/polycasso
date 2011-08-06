@@ -7,6 +7,7 @@ package com.mebigfatguy.polycasso;
  */
 public class DefaultScore implements Score {
 
+    private static final long serialVersionUID = 2603006530810631094L;
     static final int NUM_DIVISIONS = 8;
 
     /**

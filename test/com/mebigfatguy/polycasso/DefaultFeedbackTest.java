@@ -9,6 +9,9 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+/**
+ * tests the feedback scoring of an image
+ */
 public class DefaultFeedbackTest {
 
     private static final long ONE_COMPLETE_GRID_COLOR_DIFFERENCE = 16L * ((255L*255L) + (255L*255L));
