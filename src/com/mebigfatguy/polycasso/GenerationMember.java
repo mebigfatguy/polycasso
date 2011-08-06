@@ -18,9 +18,7 @@
  */
 package com.mebigfatguy.polycasso;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 /**
  * class that holds a sample set of polygons and it's score
@@ -50,20 +48,6 @@ public class GenerationMember implements Comparable<GenerationMember> {
      */
     public PolygonData[] getData() {
         return data;
-    }
-
-    /**
-     * copies the polygon data for use in a new image
-     * 
-     * @return cloned list of polygons from this image
-     */
-    public List<PolygonData> clonePolygonData() {
-        List<PolygonData> polygons = new ArrayList<PolygonData>();
-        for (PolygonData pd : data) {
-            polygons.add((PolygonData)pd.clone());
-        }
-
-        return polygons;
     }
 
     @Override

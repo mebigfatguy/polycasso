@@ -23,6 +23,7 @@ import java.awt.Dimension;
 import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
@@ -84,7 +85,7 @@ public class Improver {
     public ImprovementType improveRandomly() {
         changedMember = generationHandler.getRandomMember(false);
         if (changedMember != null) {
-            polygons = changedMember.clonePolygonData();
+            polygons = new ArrayList<PolygonData>(Arrays.<PolygonData>asList(changedMember.getData().clone()));
         } else {
             polygons = new ArrayList<PolygonData>();
         }
