@@ -3,7 +3,7 @@ package com.mebigfatguy.polycasso;
 /**
  * a default implementation of a score for the error in a image against a target image
  * this score maintains a grid of scores representing scores in sections of the image, and
- * then rolls up these scores to an overall score. This class is immutable.
+ * then rolls up these scores to an overall score.
  */
 public class DefaultScore implements Score {
 

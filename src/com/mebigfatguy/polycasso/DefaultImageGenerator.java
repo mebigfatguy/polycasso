@@ -133,7 +133,7 @@ public class DefaultImageGenerator implements ImageGenerator, Runnable {
             if (t == null) {
 
                 populateGenerationZeroElite();
-                t = new Thread[1];
+                t = new Thread[Runtime.getRuntime().availableProcessors() + 1];
                 for (int i = 0; i < t.length; i++) {
                     t[i] = new Thread(this);
                     t[i].setName("Improver : " + i);

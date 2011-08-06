@@ -69,11 +69,22 @@ public class DefaultFeedback implements Feedback {
         DataBufferByte dbb = (DataBufferByte)raster.getDataBuffer();
         byte[] testBuffer = dbb.getData();
 
+        Score score;
         if ((changedArea == null) || (changedArea.width > changedArea.height)) {
-            return calculateYMajorScore(testBuffer, previousScore, changedArea);
+            score = calculateYMajorScore(testBuffer, previousScore, changedArea);
         } else {
-            return calculateXMajorScore(testBuffer, previousScore, changedArea);
+            score = calculateXMajorScore(testBuffer, previousScore, changedArea);
         }
+
+        if ((changedArea != null) && (Math.random() < 0.05)) {
+            long realScore = calculateGridScore(testBuffer, 0, 0, width, height);
+            if (realScore != score.getDelta()) {
+                System.out.println("ERROR: Real: " + realScore + " calc: " + score.getDelta());
+            }
+        }
+
+        return score;
+
     }
 
     private Score calculateYMajorScore(byte[] testBuffer, Score previousScore, Rectangle changedArea) {
