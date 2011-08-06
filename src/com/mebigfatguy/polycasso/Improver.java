@@ -107,9 +107,11 @@ public class Improver {
             break;
 
             case RemovePolygon: {
-                int idx = r.nextInt(polygons.size());
-                changedArea = polygons.get(idx).getPolygon().getBounds();
-                polygons.remove(idx);
+                if (polygons.size() > 0) {
+                    int idx = r.nextInt(polygons.size());
+                    changedArea = polygons.get(idx).getPolygon().getBounds();
+                    polygons.remove(idx);
+                }
             }
             break;
 
