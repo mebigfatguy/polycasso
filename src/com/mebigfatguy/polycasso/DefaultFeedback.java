@@ -95,7 +95,7 @@ public class DefaultFeedback implements Feedback {
 
         DefaultScore score = (previousScore != null) ? (DefaultScore)previousScore.clone() : new DefaultScore();
 
-        boolean needAutoRecalc = (previousScore == null) || (changedArea == null);
+        boolean needFullRecalc = (previousScore == null) || (changedArea == null);
         score.overallScore = 0L;
 
         for (int y = 0; y < DefaultScore.NUM_DIVISIONS; y++) {
@@ -108,7 +108,7 @@ public class DefaultFeedback implements Feedback {
                 gridBottom = height;
             }
 
-            if (needAutoRecalc || ((changedArea.y <= gridBottom) && ((changedArea.y + changedArea.height) >= gridTop))) {
+            if (needFullRecalc || ((changedArea.y <= gridBottom) && ((changedArea.y + changedArea.height) >= gridTop))) {
                 for (int x = 0; x < DefaultScore.NUM_DIVISIONS; x++) {
                     int gridWidth = (width / DefaultScore.NUM_DIVISIONS);
                     int gridLeft = x * gridWidth;
@@ -119,7 +119,7 @@ public class DefaultFeedback implements Feedback {
                         gridRight = width;
                     }
 
-                    if (needAutoRecalc || ((changedArea.x <= gridRight) && ((changedArea.x + changedArea.width) >= gridLeft))) {
+                    if (needFullRecalc || ((changedArea.x <= gridRight) && ((changedArea.x + changedArea.width) >= gridLeft))) {
 
                         long gridError = calculateGridScore(testBuffer, gridLeft, gridTop, gridRight, gridBottom);
 
@@ -143,7 +143,7 @@ public class DefaultFeedback implements Feedback {
 
         DefaultScore score = (previousScore != null) ? (DefaultScore)previousScore.clone() : new DefaultScore();
 
-        boolean needAutoRecalc = (previousScore == null) || (changedArea == null);
+        boolean needFullRecalc = (previousScore == null) || (changedArea == null);
         score.overallScore = 0L;
 
         for (int x = 0; x < DefaultScore.NUM_DIVISIONS; x++) {
@@ -156,7 +156,7 @@ public class DefaultFeedback implements Feedback {
                 gridRight = width;
             }
 
-            if (needAutoRecalc || ((changedArea.x <= gridRight) && ((changedArea.x + changedArea.width) >= gridLeft))) {
+            if (needFullRecalc || ((changedArea.x <= gridRight) && ((changedArea.x + changedArea.width) >= gridLeft))) {
                 for (int y = 0; y < DefaultScore.NUM_DIVISIONS; y++) {
                     int gridHeight = (height / DefaultScore.NUM_DIVISIONS);
                     int gridTop = y * gridHeight;
@@ -167,7 +167,7 @@ public class DefaultFeedback implements Feedback {
                         gridBottom = height;
                     }
 
-                    if (needAutoRecalc || ((changedArea.y <= gridBottom) && ((changedArea.y + changedArea.height) >= gridTop))) {
+                    if (needFullRecalc || ((changedArea.y <= gridBottom) && ((changedArea.y + changedArea.height) >= gridTop))) {
 
                         long gridError = calculateGridScore(testBuffer, gridLeft, gridTop, gridRight, gridBottom);
 
