@@ -53,7 +53,7 @@ public class DefaultScore implements Score {
     }
 
     /**
-     * compares this core to another
+     * compares this score to another
      * 
      * @param o the score to compare to
      * @return whether the two scores have the same delta

@@ -76,6 +76,7 @@ public class DefaultFeedback implements Feedback {
             score = calculateXMajorScore(testBuffer, previousScore, changedArea);
         }
 
+        //        uncomment to test whether the grid based scoring is accurate
         //        if (Math.random() < 0.05) {
         //            long realScore = calculateGridScore(testBuffer, 0, 0, width, height);
         //            if (realScore != score.getDelta()) {

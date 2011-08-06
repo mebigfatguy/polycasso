@@ -92,7 +92,8 @@
 				source="${javac.source}"
 				target="${javac.target}"
 				deprecation="${javac.deprecation}"
-				debug="${javac.debug}">
+				debug="${javac.debug}"
+				includeantruntime="false">
 			<classpath refid="polycasso.classpath"/>
 		</javac>
 	</target>
