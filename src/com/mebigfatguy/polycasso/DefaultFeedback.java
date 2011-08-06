@@ -30,6 +30,7 @@ public class DefaultFeedback implements Feedback {
 
     private byte[] targetBuffer;
     private int width, height;
+    private int gridWidth, gridHeight;
 
     /**
      * creates a feedback object with a given targetImage. Caches the image bytes in
@@ -48,6 +49,8 @@ public class DefaultFeedback implements Feedback {
         WritableRaster raster = targetImage.getRaster();
         width = targetImage.getWidth();
         height = targetImage.getHeight();
+        gridWidth = (width / DefaultScore.NUM_DIVISIONS);
+        gridHeight = (height / DefaultScore.NUM_DIVISIONS);
         DataBufferByte dbb = (DataBufferByte)raster.getDataBuffer();
         targetBuffer = dbb.getData();
     }
@@ -99,7 +102,6 @@ public class DefaultFeedback implements Feedback {
         score.overallScore = 0L;
 
         for (int y = 0; y < DefaultScore.NUM_DIVISIONS; y++) {
-            int gridHeight = (height / DefaultScore.NUM_DIVISIONS);
             int gridTop = y * gridHeight;
             int gridBottom;
             if (y < (DefaultScore.NUM_DIVISIONS - 1)) {
@@ -110,7 +112,6 @@ public class DefaultFeedback implements Feedback {
 
             if (needFullRecalc || ((changedArea.y <= gridBottom) && ((changedArea.y + changedArea.height) >= gridTop))) {
                 for (int x = 0; x < DefaultScore.NUM_DIVISIONS; x++) {
-                    int gridWidth = (width / DefaultScore.NUM_DIVISIONS);
                     int gridLeft = x * gridWidth;
                     int gridRight;
                     if (x < (DefaultScore.NUM_DIVISIONS - 1)) {
@@ -147,7 +148,6 @@ public class DefaultFeedback implements Feedback {
         score.overallScore = 0L;
 
         for (int x = 0; x < DefaultScore.NUM_DIVISIONS; x++) {
-            int gridWidth = (width / DefaultScore.NUM_DIVISIONS);
             int gridLeft = x * gridWidth;
             int gridRight;
             if (x < (DefaultScore.NUM_DIVISIONS - 1)) {
@@ -158,7 +158,6 @@ public class DefaultFeedback implements Feedback {
 
             if (needFullRecalc || ((changedArea.x <= gridRight) && ((changedArea.x + changedArea.width) >= gridLeft))) {
                 for (int y = 0; y < DefaultScore.NUM_DIVISIONS; y++) {
-                    int gridHeight = (height / DefaultScore.NUM_DIVISIONS);
                     int gridTop = y * gridHeight;
                     int gridBottom;
                     if (y < (DefaultScore.NUM_DIVISIONS - 1)) {
