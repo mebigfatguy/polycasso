@@ -418,8 +418,10 @@ public class Improver {
      */
     private void randomCompleteChange() {
         int idx = r.nextInt(polygons.size());
-        polygons.set(idx, PolygonData.randomPoly(imageSize, settings.getMaxPoints()));
-        changedArea = null;
+        changedArea = polygons.get(idx).getPolygon().getBounds();
+        PolygonData randomPoly = PolygonData.randomPoly(imageSize, settings.getMaxPoints());
+        changedArea.union(randomPoly.getPolygon().getBounds());
+        polygons.set(idx, randomPoly);
     }
 
     /**
