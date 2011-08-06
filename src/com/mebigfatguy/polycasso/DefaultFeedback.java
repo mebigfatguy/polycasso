@@ -65,11 +65,20 @@ public class DefaultFeedback implements Feedback {
     @Override
     public Score calculateScore(BufferedImage testImage, Score previousScore, Rectangle changedArea) {
 
-        DefaultScore score = (previousScore != null) ? (DefaultScore)previousScore.clone() : new DefaultScore();
-
         WritableRaster raster = testImage.getRaster();
         DataBufferByte dbb = (DataBufferByte)raster.getDataBuffer();
         byte[] testBuffer = dbb.getData();
+
+        if ((changedArea == null) || (changedArea.width > changedArea.height)) {
+            return calculateYMajorScore(testBuffer, previousScore, changedArea);
+        } else {
+            return calculateXMajorScore(testBuffer, previousScore, changedArea);
+        }
+    }
+
+    private Score calculateYMajorScore(byte[] testBuffer, Score previousScore, Rectangle changedArea) {
+
+        DefaultScore score = (previousScore != null) ? (DefaultScore)previousScore.clone() : new DefaultScore();
 
         boolean needAutoRecalc = (previousScore == null) || (changedArea == null);
         score.overallScore = 0L;
@@ -97,31 +106,8 @@ public class DefaultFeedback implements Feedback {
 
                     if (needAutoRecalc || ((changedArea.x <= gridRight) && ((changedArea.x + changedArea.width) >= gridLeft))) {
 
-                        long gridError = 0L;
-                        for (int gy = gridTop; gy < gridBottom; gy++) {
-                            int pixelStart = (gy * width * 4) + (gridLeft * 4);
-                            int pixelEnd = pixelStart + (gridRight - gridLeft) * 4;
+                        long gridError = calculateGridScore(testBuffer, gridLeft, gridTop, gridRight, gridBottom);
 
-                            //index 0 is alpha, start at 1 (blue)
-                            for (int i = pixelStart + 1; i < pixelEnd; i++) {
-                                int blue1 = targetBuffer[i] & 0x0FF;
-                                int blue2 = testBuffer[i++] & 0x0FF;
-                                long blueError = blue1 - blue2;
-                                blueError *= blueError;
-
-                                int green1 = targetBuffer[i] & 0x0FF;
-                                int green2 = testBuffer[i++] & 0x0FF;
-                                long greenError = green1 - green2;
-                                greenError *= greenError;
-
-                                int red1 = targetBuffer[i] & 0x0FF;
-                                int red2 = testBuffer[i++] & 0x0FF;
-                                long redError = red1 - red2;
-                                redError *= redError;
-
-                                gridError += redError + greenError  + blueError;
-                            }
-                        }
                         score.gridScores[x][y] = gridError;
                         score.overallScore += gridError;
                     } else {
@@ -136,5 +122,83 @@ public class DefaultFeedback implements Feedback {
         }
 
         return score;
+    }
+
+    private Score calculateXMajorScore(byte[] testBuffer, Score previousScore, Rectangle changedArea) {
+
+        DefaultScore score = (previousScore != null) ? (DefaultScore)previousScore.clone() : new DefaultScore();
+
+        boolean needAutoRecalc = (previousScore == null) || (changedArea == null);
+        score.overallScore = 0L;
+
+        for (int x = 0; x < DefaultScore.NUM_DIVISIONS; x++) {
+            int gridWidth = (width / DefaultScore.NUM_DIVISIONS);
+            int gridLeft = x * gridWidth;
+            int gridRight;
+            if (x < (DefaultScore.NUM_DIVISIONS - 1)) {
+                gridRight = gridLeft + gridWidth;
+            } else {
+                gridRight = width;
+            }
+
+            if (needAutoRecalc || ((changedArea.x <= gridRight) && ((changedArea.x + changedArea.width) >= gridLeft))) {
+                for (int y = 0; y < DefaultScore.NUM_DIVISIONS; y++) {
+                    int gridHeight = (height / DefaultScore.NUM_DIVISIONS);
+                    int gridTop = y * gridHeight;
+                    int gridBottom;
+                    if (y < (DefaultScore.NUM_DIVISIONS - 1)) {
+                        gridBottom = gridTop + gridHeight;
+                    } else {
+                        gridBottom = height;
+                    }
+
+                    if (needAutoRecalc || ((changedArea.y <= gridBottom) && ((changedArea.y + changedArea.height) >= gridTop))) {
+
+                        long gridError = calculateGridScore(testBuffer, gridLeft, gridTop, gridRight, gridBottom);
+
+                        score.gridScores[x][y] = gridError;
+                        score.overallScore += gridError;
+                    } else {
+                        score.overallScore += score.gridScores[x][y];
+                    }
+                }
+            } else {
+                for (int y = 0; y < DefaultScore.NUM_DIVISIONS; y++) {
+                    score.overallScore += score.gridScores[x][y];
+                }
+            }
+        }
+
+        return score;
+    }
+
+    private long calculateGridScore(byte[] testBuffer, int gridLeft, int gridTop, int gridRight, int gridBottom) {
+        long gridError = 0L;
+        for (int gy = gridTop; gy < gridBottom; gy++) {
+            int pixelStart = (gy * width * 4) + (gridLeft * 4);
+            int pixelEnd = pixelStart + ((gridRight - gridLeft) * 4);
+
+            //index 0 is alpha, start at 1 (blue)
+            for (int i = pixelStart + 1; i < pixelEnd; i++) {
+                int blue1 = targetBuffer[i] & 0x0FF;
+                int blue2 = testBuffer[i++] & 0x0FF;
+                long blueError = blue1 - blue2;
+                blueError *= blueError;
+
+                int green1 = targetBuffer[i] & 0x0FF;
+                int green2 = testBuffer[i++] & 0x0FF;
+                long greenError = green1 - green2;
+                greenError *= greenError;
+
+                int red1 = targetBuffer[i] & 0x0FF;
+                int red2 = testBuffer[i++] & 0x0FF;
+                long redError = red1 - red2;
+                redError *= redError;
+
+                gridError += redError + greenError  + blueError;
+            }
+        }
+
+        return gridError;
     }
 }
