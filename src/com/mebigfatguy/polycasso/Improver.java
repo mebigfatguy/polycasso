@@ -63,6 +63,9 @@ public class Improver {
      * @return the list of polygons
      */
     public List<PolygonData> getData() {
+        if (polygons == null) {
+            return new ArrayList<PolygonData>();
+        }
         return Collections.<PolygonData>unmodifiableList(polygons);
     }
 
