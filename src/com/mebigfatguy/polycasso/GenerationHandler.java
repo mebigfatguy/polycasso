@@ -86,9 +86,8 @@ public class GenerationHandler implements Serializable {
                 generationElites++;
                 return ImprovementResult.ELITE;
             }
-
-            return ImprovementResult.FAIL;
         }
+        return ImprovementResult.FAIL;
     }
 
     /**
