@@ -140,7 +140,7 @@ public class Improver {
                     System.arraycopy(polygon.ypoints, insPos, polygon.ypoints, insPos + 1, numCopyPts);
                     polygon.ypoints[insPos] = y;
                     polygon.invalidate();
-                    changedArea.union(polygon.getBounds());
+                    changedArea = changedArea.union(polygon.getBounds());
                     polygons.set(idx, pd);
 
                 } else {
@@ -164,7 +164,7 @@ public class Improver {
                     System.arraycopy(polygon.ypoints, delPos+1, polygon.ypoints, delPos, numPtCopy);
                     polygon.npoints--;
                     polygon.invalidate();
-                    changedArea.union(polygon.getBounds());
+                    changedArea = changedArea.union(polygon.getBounds());
                     polygons.set(idx, pd);
                 } else {
                     randomCompleteChange();
@@ -189,7 +189,7 @@ public class Improver {
                 clipToRange(0, imageSize.width, polygon.xpoints[movePos]);
                 clipToRange(0, imageSize.height, polygon.ypoints[movePos]);
                 polygon.invalidate();
-                changedArea.union(polygon.getBounds());
+                changedArea = changedArea.union(polygon.getBounds());
                 polygons.set(idx, pd);
             }
             break;
@@ -209,7 +209,7 @@ public class Improver {
                     polygon.ypoints[rectifyPos] = polygon.ypoints[targetPos];
                 }
                 polygon.invalidate();
-                changedArea.union(polygon.getBounds());
+                changedArea = changedArea.union(polygon.getBounds());
                 polygons.set(idx, pd);
             }
             break;
@@ -243,7 +243,7 @@ public class Improver {
                     polygon.ypoints[i] += (polygon.ypoints[i] < midY) ? shrinkFactor : -shrinkFactor;
                 }
                 polygon.invalidate();
-                changedArea.union(polygon.getBounds());
+                changedArea = changedArea.union(polygon.getBounds());
                 polygons.set(idx, pd);
             }
             break;
@@ -265,7 +265,7 @@ public class Improver {
                     polygon.ypoints[i] = clipToRange(0, imageSize.height, polygon.ypoints[i]);
                 }
                 polygon.invalidate();
-                changedArea.union(polygon.getBounds());
+                changedArea = changedArea.union(polygon.getBounds());
                 polygons.set(idx, pd);
             }
             break;
@@ -286,7 +286,7 @@ public class Improver {
                     polygon.ypoints[i] = clipToRange(0, imageSize.height, polygon.ypoints[i]);
                 }
                 polygon.invalidate();
-                changedArea.union(polygon.getBounds());
+                changedArea = changedArea.union(polygon.getBounds());
                 polygons.set(idx, pd);
             }
             break;
@@ -366,7 +366,7 @@ public class Improver {
                     } else {
                         changedArea = polygons.get(idx).getPolygon().getBounds();
                         polygons.set(idx, copyData[idx]);
-                        changedArea.union(polygons.get(idx).getPolygon().getBounds());
+                        changedArea = changedArea.union(polygons.get(idx).getPolygon().getBounds());
                     }
                 }
             }
@@ -385,7 +385,7 @@ public class Improver {
                     } else {
                         changedArea = polygons.get(idx).getPolygon().getBounds();
                         polygons.set(idx, copyData[idx]);
-                        changedArea.union(polygons.get(idx).getPolygon().getBounds());
+                        changedArea = changedArea.union(polygons.get(idx).getPolygon().getBounds());
                     }
                 }
             }
@@ -425,7 +425,7 @@ public class Improver {
         int idx = r.nextInt(polygons.size());
         changedArea = polygons.get(idx).getPolygon().getBounds();
         PolygonData randomPoly = PolygonData.randomPoly(imageSize, settings.getMaxPoints());
-        changedArea.union(randomPoly.getPolygon().getBounds());
+        changedArea = changedArea.union(randomPoly.getPolygon().getBounds());
         polygons.set(idx, randomPoly);
     }
 
