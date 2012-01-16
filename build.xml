@@ -55,6 +55,7 @@
 	</target>
 	
 	<target name="-init" description="prepares repository for a build">
+		<mkdir dir="${lib.dir}"/>
 		<mkdir dir="${classes.dir}"/>
 		<mkdir dir="${javadoc.dir}"/>
 		<path id="polycasso.classpath">
