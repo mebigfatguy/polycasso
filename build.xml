@@ -37,6 +37,7 @@
 	
 	<property name="forms.version" value="1.2.1"/>
 	<property name="commons-io.version" value="1.4"/> 
+	<property name="junit.version" value="4.10"/>
 	
 	<property name="polycasso.version" value="1.6.0"/>
 	
@@ -67,6 +68,7 @@
 
 	<property name="forms_url" value="http://repo1.maven.org/maven2/com/jgoodies/forms/${forms.version}/forms-${forms.version}.jar"/> 
     <property name="commonsio_url" value="http://repo1.maven.org/maven2/commons-io/commons-io/${commons-io.version}/commons-io-${commons-io.version}.jar"/> 
+    <property name="junit_url" value="http://repo1.maven.org/maven2/junit/junit/${junit.version}/junit-${junit.version}.jar"/> 
 	
     <target name="forms_check">
         <available file="${basedir}/lib/forms-${forms.version}.jar" property="forms_exists"/>
@@ -75,16 +77,24 @@
     <target name="commonsio_check">
         <available file="${basedir}/lib/commons-io-${commons-io.version}.jar" property="commonsio.exists"/>
     </target>
+	
+    <target name="junit_check">
+        <available file="${basedir}/lib/junit-${junit.version}.jar" property="junit.exists"/>
+    </target>
 
     <target name="install_forms" depends="forms_check" unless="forms_exists" description="installs forms.jar into lib">
-        <get src="${forms_url}" dest="${basedir}/lib/forms-${forms.version}.jar" verbose="true" ignoreerrors="true"/>
+        <get src="${forms_url}" dest="${lib.dir}/forms-${forms.version}.jar" verbose="true" ignoreerrors="true"/>
     </target>
 
     <target name="install_commonsio" depends="commonsio_check" unless="commonsio.exists" description="installs commons-io.jar into lib">
-        <get src="${commonsio_url}" dest="${basedir}/lib/commons-io-${commons-io.version}.jar" verbose="true" ignoreerrors="true"/>
+        <get src="${commonsio_url}" dest="${lib.dir}/commons-io-${commons-io.version}.jar" verbose="true" ignoreerrors="true"/>
     </target>
 	
-    <target name="pull" depends="install_forms, install_commonsio" description="pulls in the 3rd party jars">
+    <target name="install_junit" depends="junit_check" unless="junit.exists" description="installs junit.jar into lib">
+        <get src="${junit_url}" dest="${lib.dir}/junit-${junit.version}.jar" verbose="true" ignoreerrors="true"/>
+    </target>
+	
+    <target name="pull" depends="install_forms, install_commonsio, install_junit" description="pulls in the 3rd party jars">
     </target>
 		
 	<target name="compile" depends="-init, pull" description="compiles java files">
@@ -160,6 +170,7 @@
 	<target name="test" depends="-init, compile, resources" description="runs unit tests">
 		<path id="polycassotest.classpath">
 			<pathelement location="${classes.dir}"/>
+	        <pathelement location="${lib.dir}/junit-${junit.version}.jar"/>
 		</path>
         <junit
             printsummary="true"
@@ -168,7 +179,7 @@
             showoutput="true"
             fork="true">
 
-            <classpath><path refid="polycasso.classpath"/></classpath>
+            <classpath><path refid="polycassotest.classpath"/></classpath>
             <batchtest fork="true">
                 <fileset dir="${classes.dir}"
                 	excludes="test/*$*"
