@@ -38,7 +38,7 @@ public class RandomImageFinder {
     private static final String ROOTURL = "http://search.lycos.com";
     private static final String URL = ROOTURL + "/images/?q={0}";
     private static final Pattern IMAGE_HTML_PATTERN = Pattern.compile("\\<a href=\"(/image-preview\\?image=.*)\"");
-    private static final Pattern IMAGE_PATTERN = Pattern.compile("<a href=\"([^\"]*)\" title=\"Full-size Image\">");
+    private static final Pattern IMAGE_PATTERN = Pattern.compile("<a href=\"([^\"]*)\" title=\"Full-size image\">");
     private static final int NAMELEN = 3;
     private static final int ATTEMPTS = 5;
 
@@ -67,6 +67,7 @@ public class RandomImageFinder {
 
                 return findImageAt(MessageFormat.format(URL, new String(ranName)), settings);
             } catch (IOException ioe) {
+                ioe.printStackTrace();
             }
         }
 
