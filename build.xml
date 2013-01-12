@@ -36,8 +36,8 @@
 	<property name="javac.debug" value="on"/>
 	
 	<property name="forms.version" value="1.2.1"/>
-	<property name="commons-io.version" value="1.4"/> 
-	<property name="junit.version" value="4.10"/>
+	<property name="commons-io.version" value="2.4"/> 
+	<property name="junit.version" value="4.11"/>
 	
 	<property name="polycasso.version" value="1.6.0"/>
 	
