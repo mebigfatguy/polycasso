@@ -145,6 +145,9 @@
 			<manifest>
 				<attribute name="polycasso-version" value="${polycasso.version}"/>
 				<attribute name="Main-Class" value="com.mebigfatguy.polycasso.Polycasso"/>
+                <attribute name="Application-Name" value="Polycasso" />
+                <attribute name="Permissions" value="all-permissions" />
+                <attribute name="Codebase" value="*" />
 				<attribute name="Class-Path" value="commons-io-${commons-io.version}.jar forms-${forms.version}.jar"/>
 			</manifest>
 		</jar>	
