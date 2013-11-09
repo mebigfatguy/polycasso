@@ -8,4 +8,5 @@ classes
 *.*~
 javadoc
 *.orig
+version.properties
 htdocs/jnlp/polycasso.jnlp
