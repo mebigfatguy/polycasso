@@ -19,7 +19,7 @@
  */
  -->
 
-<project name="polycasso" default="info" xmlns:yank="antlib:com.mebigfatguy.yank">
+<project name="polycasso" default="info">
 	
 	<property file="build.properties"/>
 	
@@ -59,7 +59,7 @@
   		</delete>
 	</target>
 	
-   <target name="yank">
+   <target name="yank" xmlns:yank="antlib:com.mebigfatguy.yank">
         <mkdir dir="${lib.dir}"/>
         <yank:yank yankFile="${basedir}/yank.xls" destination="${lib.dir}" source="true">
             <server url="http://repo1.maven.org/maven2"/>
