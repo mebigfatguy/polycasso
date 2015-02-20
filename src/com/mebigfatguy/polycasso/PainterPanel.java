@@ -1,7 +1,7 @@
 /*
  * polycasso - Cubism Artwork generator
- * Copyright 2009-2014 MeBigFatGuy.com
- * Copyright 2009-2014 Dave Brosius
+ * Copyright 2009-2015 MeBigFatGuy.com
+ * Copyright 2009-2015 Dave Brosius
  * Inspired by work by Roger Alsing
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
