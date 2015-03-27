@@ -46,9 +46,7 @@ public class PNGSaver implements Saver {
 	public void save(String fileName, Dimension imageSize, PolygonData[] data)
 			throws IOException {
 		
-		BufferedOutputStream bos = null;
-		try {
-			bos = new BufferedOutputStream(new FileOutputStream(fileName));
+		try (BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(fileName))) {
 			
 			BufferedImage image = new BufferedImage(imageSize.width, imageSize.height, BufferedImage.TYPE_4BYTE_ABGR);
 			Graphics2D g2d = (Graphics2D)image.getGraphics();
@@ -64,8 +62,6 @@ public class PNGSaver implements Saver {
 			} finally {
 			    g2d.dispose();
 			}	
-		} finally {
-			IOUtils.closeQuietly(bos);
 		}
 	}
 
