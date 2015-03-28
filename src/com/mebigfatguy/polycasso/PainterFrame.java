@@ -43,8 +43,6 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 
-import org.apache.commons.io.IOUtils;
-
 /**
  * the main window for showing the image as it is being improved on.
  */
@@ -328,27 +326,19 @@ public class PainterFrame extends JFrame implements ImageGeneratedListener {
     }
 
     private Settings loadSettings() {
-        ObjectInputStream ois = null;
-        try {
-            File polyDir = getSettingsDirectory();
-            ois = new ObjectInputStream(new BufferedInputStream(new FileInputStream(new File(polyDir, "settings.ser"))));
+        File polyDir = getSettingsDirectory();
+        try (ObjectInputStream ois = new ObjectInputStream(new BufferedInputStream(new FileInputStream(new File(polyDir, "settings.ser"))))) {
             return (Settings)ois.readObject();
         } catch (Exception e) {
             return new Settings();
-        } finally {
-            IOUtils.closeQuietly(ois);
         }
     }
 
     private void saveSettings(Settings s) {
-        ObjectOutputStream oos = null;
-        try {
-            File polyDir = getSettingsDirectory();
-            oos = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(new File(polyDir, "settings.ser"))));
+    	File polyDir = getSettingsDirectory();
+        try (ObjectOutputStream oos = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(new File(polyDir, "settings.ser"))))) {
             oos.writeObject(s);
         } catch (Exception e) {
-        } finally {
-            IOUtils.closeQuietly(oos);
         }
     }
 

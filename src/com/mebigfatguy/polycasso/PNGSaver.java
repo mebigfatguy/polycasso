@@ -28,8 +28,6 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
-import org.apache.commons.io.IOUtils;
-
 /**
  * generates a png file from the set of polygons
  */
