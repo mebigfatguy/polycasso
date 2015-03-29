@@ -25,8 +25,6 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-
-import org.apache.commons.io.IOUtils;
 /**
  * generates an svg file from the set of polygons
  */
@@ -42,11 +40,8 @@ public class SVGSaver implements Saver {
 	@Override
 	public void save(String fileName, Dimension imageSize, PolygonData[] data)
 			throws IOException {
-		
-		PrintWriter pw = null;
-		
-		try {
-			pw = new PrintWriter(new BufferedWriter(new FileWriter(fileName)));
+	
+		try (PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(fileName)))) {
 			
 			pw.print("<svg xmlns=\"http://www.w3.org/2000/svg\"");
 			pw.print(" width=\"");
@@ -86,8 +81,6 @@ public class SVGSaver implements Saver {
 			}
 			pw.println("\t</g>");
 			pw.println("</svg>");
-		} finally {
-			IOUtils.closeQuietly(pw);
 		}
 	}
 	
