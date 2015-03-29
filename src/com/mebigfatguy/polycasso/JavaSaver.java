@@ -50,9 +50,6 @@ public class JavaSaver implements Saver {
     public void save(String fileName, Dimension imageSize, PolygonData[] data)
             throws IOException {
 
-        InputStream templateStream = null;
-        PrintWriter pw = null;
-
         int sep = fileName.lastIndexOf(File.separator);
         String className;
         if (sep >= 0) {
@@ -65,10 +62,8 @@ public class JavaSaver implements Saver {
             className = className.substring(0, className.length() - EXTENSION.length());
         }
 
-        try {
-            pw = new PrintWriter(new BufferedWriter(new FileWriter(fileName)));
-
-            templateStream = getClass().getResourceAsStream("/com/mebigfatguy/polycasso/JavaSaver.template");
+        try (PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(fileName)));
+        	 InputStream templateStream = getClass().getResourceAsStream("/com/mebigfatguy/polycasso/JavaSaver.template")) {
             String template = IOUtils.toString(templateStream);
 
             String polygonData = getPolygonData(data);
@@ -86,10 +81,6 @@ public class JavaSaver implements Saver {
             pw.println(template);
 
         } catch (IOException ioe) {
-
-        } finally {
-            IOUtils.closeQuietly(templateStream);
-            IOUtils.closeQuietly(pw);
         }
     }
 
