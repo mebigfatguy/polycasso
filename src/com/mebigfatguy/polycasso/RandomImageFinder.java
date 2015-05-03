@@ -37,7 +37,7 @@ public class RandomImageFinder {
 
     private static final String ROOTURL = "http://search.lycos.com";
     private static final String URL = ROOTURL + "/images/?q={0}";
-    private static final Pattern IMAGE_HTML_PATTERN = Pattern.compile("\\<a href=\"(/image-preview\\?image=.*)\"");
+    private static final Pattern IMAGE_HTML_PATTERN = Pattern.compile("\"ClickURL\":\"([^\"]*)\"");
     private static final Pattern IMAGE_PATTERN = Pattern.compile("<a href=\"([^\"]*)\" title=\"Full-size image\">");
     private static final int NAMELEN = 3;
     private static final int ATTEMPTS = 5;
@@ -93,15 +93,8 @@ public class RandomImageFinder {
             images.add(m.group(1));
         }
 
-        html = new String(URLFetcher.fetchURLData(ROOTURL + images.get((int)(Math.random() * images.size())), settings.getProxyHost(), settings.getProxyPort()), "UTF-8");
-
-        m = IMAGE_PATTERN.matcher(html);
-        if (m.find()) {
-            String imageUrl = URLDecoder.decode(m.group(1), "UTF-8");
-
-            return new ImageIcon(URLFetcher.fetchURLData(imageUrl, settings.getProxyHost(), settings.getProxyPort())).getImage();
-        }
-
-        throw new IOException("Failed to find image");
+        String imageURL = images.get((int)(Math.random() * images.size()));
+        imageURL = imageURL.replace("\\",  "");
+        return new ImageIcon(URLFetcher.fetchURLData(imageURL, settings.getProxyHost(), settings.getProxyPort())).getImage();
     }
 }
