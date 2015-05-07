@@ -20,7 +20,6 @@ package com.mebigfatguy.polycasso;
 
 import java.awt.Image;
 import java.io.IOException;
-import java.net.URLDecoder;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +37,6 @@ public class RandomImageFinder {
     private static final String ROOTURL = "http://search.lycos.com";
     private static final String URL = ROOTURL + "/images/?q={0}";
     private static final Pattern IMAGE_HTML_PATTERN = Pattern.compile("\"ClickURL\":\"([^\"]*)\"");
-    private static final Pattern IMAGE_PATTERN = Pattern.compile("<a href=\"([^\"]*)\" title=\"Full-size image\">");
     private static final int NAMELEN = 3;
     private static final int ATTEMPTS = 5;
 
