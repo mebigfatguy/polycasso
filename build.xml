@@ -24,12 +24,13 @@
 	<property file="build.properties"/>
 	
 	<property name="src.dir" value="${basedir}/src"/>
-	<property name="classes.dir" value="${basedir}/classes"/>
+	<property name="target.dir" value="${basedir}/target"/>
+	<property name="classes.dir" value="${target.dir}/classes"/>
 	<property name="lib.dir" value="${basedir}/lib"/>
 	<property name="etc.dir" value="${basedir}/etc"/>
 	<property name="htdocs.dir" value="${basedir}/htdocs"/>
 	<property name="jnlp.dir" value="${htdocs.dir}/jnlp"/>
-	<property name="javadoc.dir" value="${htdocs.dir}/javadoc"/>
+	<property name="javadoc.dir" value="${target.dir}/javadoc"/>
 	<property name="javac.source" value="1.7"/>
 	<property name="javac.target" value="1.7"/>
 	<property name="javac.deprecation" value="on"/>
@@ -46,8 +47,7 @@
     </target>
     	
 	<target name="clean" description="removes all generated collateral">
-		<delete dir="${classes.dir}"/>
-		<delete dir="${javadoc.dir}"/>
+		<delete dir="${target.dir}"/>
 		<delete>
 			<fileset dir="${jnlp.dir}">
 				<include name="polycasso*.jar"/>
@@ -69,6 +69,7 @@
 	
 	<target name="-init" depends="yank" description="prepares repository for a build">
 		<mkdir dir="${lib.dir}"/>
+		<mkdir dir="${target.dir}"/>
 		<mkdir dir="${classes.dir}"/>
 		<mkdir dir="${javadoc.dir}"/>
 		<path id="polycasso.classpath">
@@ -112,7 +113,7 @@
 	</target>
 	
 	<target name="jar" depends="compile, resources" description="produces the polycasso jar file">
-		<jar destfile="${jnlp.dir}/polycasso-${polycasso.version}.jar">
+		<jar destfile="${target.dir}/polycasso-${polycasso.version}.jar">
 			<fileset dir="${classes.dir}">
 				<include name="**/*.class"/>
 				<include name="**/*.properties"/>
@@ -131,10 +132,11 @@
 				<attribute name="Class-Path" value="commons-io-${commons-io.version}.jar forms-${forms.version}.jar"/>
 			</manifest>
 		</jar>	
+		<copy file="${target.dir}/polycasso-${polycasso.version}.jar" tofile="${jnlp.dir}/polycasso-${polycasso.version}.jar"/>
 	</target>
 	
 	<target name="srczip" description="builds the source distribution zip file">
-		<zip destfile="${basedir}/polycasso-src-${polycasso.version}.zip" 
+		<zip destfile="${target.dir}/polycasso-src-${polycasso.version}.zip" 
 			 basedir="${basedir}"
 			 includes="src/**/*.java, src/**/*.properties, lib/**/*.jar, *.txt"/>
 	</target>
