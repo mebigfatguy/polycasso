@@ -73,6 +73,7 @@
 		<mkdir dir="${classes.dir}"/>
 		<mkdir dir="${javadoc.dir}"/>
 		<path id="polycasso.classpath">
+			<pathelement location="${classes.dir}"/>
 			<pathelement location="${lib.dir}/commons-io-${commons-io.version}.jar"/>
 			<pathelement location="${lib.dir}/forms-${forms.version}.jar"/>
 		</path>
@@ -174,6 +175,10 @@
 	</target>
 	
 	<target name="build" depends="clean, -init, compile, resources, test, jar" description="builds the polycasso jar"/>
+	
+	<target name="run" depends="build" description="run the app">
+		<java classpathref="polycasso.classpath" classname="com.mebigfatguy.polycasso.Polycasso" fork="true"/>
+	</target>
 	
 	<target name="jnlp" description="copy jars to jnlp directory">
 		<copy todir="${jnlp.dir}">
