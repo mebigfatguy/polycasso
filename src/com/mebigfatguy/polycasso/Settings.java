@@ -3,13 +3,13 @@
  * Copyright 2009-2015 MeBigFatGuy.com
  * Copyright 2009-2015 Dave Brosius
  * Inspired by work by Roger Alsing
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *    http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,8 +22,7 @@ import java.awt.Dimension;
 import java.io.Serializable;
 
 /**
- * a simple java bean holding settings that are used to control how
- * Polycasso runs
+ * a simple java bean holding settings that are used to control how Polycasso runs
  */
 public class Settings implements Cloneable, Serializable {
 
@@ -63,13 +62,13 @@ public class Settings implements Cloneable, Serializable {
 
     /**
      * clones the Settings object
-     * 
+     *
      * @return a new copy of the settings object
      */
     @Override
-    public Object clone() {
+    public Settings clone() {
         try {
-            return super.clone();
+            return (Settings) super.clone();
         } catch (CloneNotSupportedException cnse) {
             return new Settings();
         }
@@ -77,8 +76,9 @@ public class Settings implements Cloneable, Serializable {
 
     /**
      * sets the generation size
-     * 
-     * @param generationSz the size of each generation
+     *
+     * @param generationSz
+     *            the size of each generation
      */
     public void setGenerationSize(int generationSz) {
         generationSize = generationSz;
@@ -86,7 +86,7 @@ public class Settings implements Cloneable, Serializable {
 
     /**
      * gets the generation size
-     * 
+     *
      * @return the generation size
      */
     public int getGenerationSize() {
@@ -95,8 +95,9 @@ public class Settings implements Cloneable, Serializable {
 
     /**
      * sets the elite size, the number of members that are copied from one generation to another
-     * 
-     * @param eliteSz the elite size
+     *
+     * @param eliteSz
+     *            the elite size
      */
     public void setEliteSize(int eliteSz) {
         eliteSize = eliteSz;
@@ -104,7 +105,7 @@ public class Settings implements Cloneable, Serializable {
 
     /**
      * gets the elite size, the number of members that are copied from one generation to another
-     * 
+     *
      * @return the elite size
      */
     public int getEliteSize() {
@@ -113,8 +114,9 @@ public class Settings implements Cloneable, Serializable {
 
     /**
      * sets whether to use simulated annealing
-     * 
-     * @param annealing whether to use annealing
+     *
+     * @param annealing
+     *            whether to use annealing
      */
     public void setUseAnnealing(boolean annealing) {
         useAnnealing = annealing;
@@ -122,7 +124,7 @@ public class Settings implements Cloneable, Serializable {
 
     /**
      * gets whether to use simulating annealing
-     * 
+     *
      * @return whether to use simulating annealing
      */
     public boolean isUseAnnealing() {
@@ -131,8 +133,9 @@ public class Settings implements Cloneable, Serializable {
 
     /**
      * sets the error below which polygon samples can be included in a generation, even if not the best
-     * 
-     * @param startTemp the pixel error cutoff
+     *
+     * @param startTemp
+     *            the pixel error cutoff
      */
     public void setStartTemperature(double startTemp) {
         startTemperature = startTemp;
@@ -140,7 +143,7 @@ public class Settings implements Cloneable, Serializable {
 
     /**
      * gets the error below wich polygon samples can be included in a generation, even if not the best
-     * 
+     *
      * @return the pixel error cutoff
      */
     public double getStartTemperature() {
@@ -149,8 +152,9 @@ public class Settings implements Cloneable, Serializable {
 
     /**
      * sets how quickly the error cutoff decrements each generation
-     * 
-     * @param coolRate the cutoff decrementor value
+     *
+     * @param coolRate
+     *            the cutoff decrementor value
      */
     public void setCoolingRate(double coolRate) {
         coolingRate = coolRate;
@@ -158,7 +162,7 @@ public class Settings implements Cloneable, Serializable {
 
     /**
      * gets how quickly the error cutoff decrements each generation
-     * 
+     *
      * @return the cutoff decrementor value
      */
     public double getCoolingRate() {
@@ -167,8 +171,9 @@ public class Settings implements Cloneable, Serializable {
 
     /**
      * sets the maximum image size
-     * 
-     * @param imageSize the image size
+     *
+     * @param imageSize
+     *            the image size
      */
     public void setMaxImageSize(Dimension imageSize) {
         maxImageSize = imageSize;
@@ -176,7 +181,7 @@ public class Settings implements Cloneable, Serializable {
 
     /**
      * gets the maximum image size
-     * 
+     *
      * @return the image size
      */
     public Dimension getMaxImageSize() {
@@ -185,8 +190,9 @@ public class Settings implements Cloneable, Serializable {
 
     /**
      * sets the maximum polygons that can be used to image the picture
-     * 
-     * @param maxPolys the maximum number of polygons
+     *
+     * @param maxPolys
+     *            the maximum number of polygons
      */
     public void setMaxPolygons(int maxPolys) {
         maxPolygons = maxPolys;
@@ -194,7 +200,7 @@ public class Settings implements Cloneable, Serializable {
 
     /**
      * gets the maximum polygons that can be used to image the picture
-     * 
+     *
      * @return the maximum number of polygons
      */
     public int getMaxPolygons() {
@@ -203,8 +209,9 @@ public class Settings implements Cloneable, Serializable {
 
     /**
      * sets the maximum number of points per polygon
-     * 
-     * @param maxPts the maximum polygon points
+     *
+     * @param maxPts
+     *            the maximum polygon points
      */
     public void setMaxPoints(int maxPts) {
         maxPoints = maxPts;
@@ -212,7 +219,7 @@ public class Settings implements Cloneable, Serializable {
 
     /**
      * gets the maximum number of points per polygon
-     * 
+     *
      * @return the maximum polygon points
      */
     public int getMaxPoints() {
@@ -220,19 +227,18 @@ public class Settings implements Cloneable, Serializable {
     }
 
     /**
-     * sets the largest movement that any polygon point can make in one
-     * improvement attempt
-     * 
-     * @param maxPointMovement the maximum allowed movement
+     * sets the largest movement that any polygon point can make in one improvement attempt
+     *
+     * @param maxPointMovement
+     *            the maximum allowed movement
      */
     public void setMaxPtMovement(int maxPointMovement) {
         maxPtMovement = maxPointMovement;
     }
 
     /**
-     * gets the largest movement that any polygon point can make in one
-     * improvement attempt
-     * 
+     * gets the largest movement that any polygon point can make in one improvement attempt
+     *
      * @return the maximum allowed movement
      */
     public int getMaxPtMovement() {
@@ -241,8 +247,9 @@ public class Settings implements Cloneable, Serializable {
 
     /**
      * sets the maximum color component change
-     * 
-     * @param maxColorChg the max color change
+     *
+     * @param maxColorChg
+     *            the max color change
      */
     public void setMaxColorChange(int maxColorChg) {
         maxColorChange = maxColorChg;
@@ -250,7 +257,7 @@ public class Settings implements Cloneable, Serializable {
 
     /**
      * gets the maximum color component change
-     * 
+     *
      * @return the max color change
      */
     public int getMaxColorChange() {
@@ -259,7 +266,7 @@ public class Settings implements Cloneable, Serializable {
 
     /**
      * gets the proxy host
-     * 
+     *
      * @return the proxy host or null if none set
      */
     public String getProxyHost() {
@@ -268,8 +275,9 @@ public class Settings implements Cloneable, Serializable {
 
     /**
      * sets the proxy host
-     * 
-     * @param proxyHost the proxy host or null if none to set
+     *
+     * @param proxyHost
+     *            the proxy host or null if none to set
      */
     public void setProxyHost(String proxyHost) {
         this.proxyHost = proxyHost;
@@ -277,7 +285,7 @@ public class Settings implements Cloneable, Serializable {
 
     /**
      * gets the proxy port
-     * 
+     *
      * @return the proxy port or 0 if none set
      */
     public int getProxyPort() {
@@ -286,12 +294,12 @@ public class Settings implements Cloneable, Serializable {
 
     /**
      * sets the proxy port
-     * 
-     * @param proxyPort the proxy port or 0 if none to set
+     *
+     * @param proxyPort
+     *            the proxy port or 0 if none to set
      */
     public void setProxyPort(int proxyPort) {
         this.proxyPort = proxyPort;
     }
-
 
 }

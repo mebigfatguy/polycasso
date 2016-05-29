@@ -3,13 +3,13 @@
  * Copyright 2009-2015 MeBigFatGuy.com
  * Copyright 2009-2015 Dave Brosius
  * Inspired by work by Roger Alsing
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *    http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -43,8 +43,7 @@ import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
 /**
- * a simple dialog to allow for the editing of various settings used to
- * control how Polycasso works.
+ * a simple dialog to allow for the editing of various settings used to control how Polycasso works.
  */
 public class SettingsDialog extends JDialog {
 
@@ -68,15 +67,15 @@ public class SettingsDialog extends JDialog {
     private SelectAllFocuser focuser;
     private boolean isOK;
 
-
     /**
      * constructs the dialog using the passed in settings to set default values
-     * 
-     * @param settings the default values for settings
+     *
+     * @param settings
+     *            the default values for settings
      */
     public SettingsDialog(Settings settings) {
         setTitle(PolycassoBundle.getString(PolycassoBundle.Key.Settings));
-        dlgSettings = (Settings)settings.clone();
+        dlgSettings = settings.clone();
         initComponents();
         initListeners();
         isOK = false;
@@ -84,7 +83,7 @@ public class SettingsDialog extends JDialog {
 
     /**
      * did the user click the ok button
-     * 
+     *
      * @return if the ok button was clicked
      */
     public boolean isOK() {
@@ -93,7 +92,7 @@ public class SettingsDialog extends JDialog {
 
     /**
      * retrieves the settings set in the dialog by the user
-     * 
+     *
      * @return the updated settings
      */
     public Settings getSettings() {
@@ -123,7 +122,7 @@ public class SettingsDialog extends JDialog {
 
     /**
      * creates the options (settings) panel
-     * 
+     *
      * @return the options panel
      */
     private JPanel createOptionsPanel() {
@@ -191,11 +190,13 @@ public class SettingsDialog extends JDialog {
 
     private JPanel createGeneticsPanel() {
 
-        JPanel geneticsPanel  = new JPanel();
-        geneticsPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(PolycassoBundle.getString(PolycassoBundle.Key.GeneticsOptions)),
-                BorderFactory.createEmptyBorder(10, 10, 10, 10)));
+        JPanel geneticsPanel = new JPanel();
+        geneticsPanel
+                .setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(PolycassoBundle.getString(PolycassoBundle.Key.GeneticsOptions)),
+                        BorderFactory.createEmptyBorder(10, 10, 10, 10)));
 
-        geneticsPanel.setLayout(new FormLayout("6dlu, pref, 3dlu, 100px, 3dlu", "pref, 1dlu, pref, 1dlu, pref, 1dlu, pref, 1dlu, pref, 1dlu, pref, 1dlu, pref"));
+        geneticsPanel
+                .setLayout(new FormLayout("6dlu, pref, 3dlu, 100px, 3dlu", "pref, 1dlu, pref, 1dlu, pref, 1dlu, pref, 1dlu, pref, 1dlu, pref, 1dlu, pref"));
         CellConstraints cc = new CellConstraints();
 
         JLabel generationSizeLabel = new JLabel(PolycassoBundle.getString(PolycassoBundle.Key.GenerationSize));
@@ -264,7 +265,7 @@ public class SettingsDialog extends JDialog {
 
     /**
      * creates the control panel
-     * 
+     *
      * @return the control panel
      */
     private JPanel createControlPanel() {
@@ -348,19 +349,21 @@ public class SettingsDialog extends JDialog {
 
         /**
          * implements the listener to select all the text
-         * 
-         * @param fe the focus event
+         *
+         * @param fe
+         *            the focus event
          */
         @Override
         public void focusGained(FocusEvent fe) {
-            JTextComponent comp = (JTextComponent)fe.getSource();
+            JTextComponent comp = (JTextComponent) fe.getSource();
             comp.selectAll();
         }
 
         /**
          * unused
-         * 
-         * @param fe the focus event
+         *
+         * @param fe
+         *            the focus event
          */
         @Override
         public void focusLost(FocusEvent fe) {
@@ -369,7 +372,7 @@ public class SettingsDialog extends JDialog {
 
     /**
      * makes sure that settings selected are rational, and warns otherwise
-     * 
+     *
      * @return whether the settings are valid
      */
     private boolean validateSettings() {

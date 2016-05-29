@@ -3,13 +3,13 @@
  * Copyright 2009-2015 MeBigFatGuy.com
  * Copyright 2009-2015 Dave Brosius
  * Inspired by work by Roger Alsing
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *    http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -33,16 +33,16 @@ public class DefaultFeedback implements Feedback {
     private int gridWidth, gridHeight;
 
     /**
-     * creates a feedback object with a given targetImage. Caches the image bytes in
-     * member variables.
+     * creates a feedback object with a given targetImage. Caches the image bytes in member variables.
      */
     public DefaultFeedback() {
     }
 
     /**
      * caches information about the target image
-     * 
-     * @param targetImage the target image that will be the judge of test images
+     *
+     * @param targetImage
+     *            the target image that will be the judge of test images
      */
     @Override
     public void setTargetImage(BufferedImage targetImage) {
@@ -51,25 +51,27 @@ public class DefaultFeedback implements Feedback {
         height = targetImage.getHeight();
         gridWidth = (width / DefaultScore.NUM_DIVISIONS);
         gridHeight = (height / DefaultScore.NUM_DIVISIONS);
-        DataBufferByte dbb = (DataBufferByte)raster.getDataBuffer();
+        DataBufferByte dbb = (DataBufferByte) raster.getDataBuffer();
         targetBuffer = dbb.getData();
     }
 
     /**
-     * returns a score of how close the test image is to the target
-     * which is the square of the error to the target image
-     * 
-     * @param testImage the image to score
-     * @param previousScore the score of the generated image from which this image was created
-     * @param changedArea the area of changed between the parent generated image and this one
-     * 
+     * returns a score of how close the test image is to the target which is the square of the error to the target image
+     *
+     * @param testImage
+     *            the image to score
+     * @param previousScore
+     *            the score of the generated image from which this image was created
+     * @param changedArea
+     *            the area of changed between the parent generated image and this one
+     *
      * @return a score that represents its closeness to ideal
      */
     @Override
     public Score calculateScore(BufferedImage testImage, Score previousScore, Rectangle changedArea) {
 
         WritableRaster raster = testImage.getRaster();
-        DataBufferByte dbb = (DataBufferByte)raster.getDataBuffer();
+        DataBufferByte dbb = (DataBufferByte) raster.getDataBuffer();
         byte[] testBuffer = dbb.getData();
 
         Score score;
@@ -85,7 +87,7 @@ public class DefaultFeedback implements Feedback {
 
     private Score calculateYMajorScore(byte[] testBuffer, Score previousScore, Rectangle changedArea) {
 
-        DefaultScore score = (previousScore != null) ? (DefaultScore)previousScore.clone() : new DefaultScore();
+        DefaultScore score = (previousScore != null) ? (DefaultScore) previousScore.clone() : new DefaultScore();
 
         boolean needFullRecalc = (previousScore == null) || (changedArea == null);
         score.overallScore = 0L;
@@ -135,7 +137,7 @@ public class DefaultFeedback implements Feedback {
 
     private Score calculateXMajorScore(byte[] testBuffer, Score previousScore, Rectangle changedArea) {
 
-        DefaultScore score = (previousScore != null) ? (DefaultScore)previousScore.clone() : new DefaultScore();
+        DefaultScore score = (previousScore != null) ? (DefaultScore) previousScore.clone() : new DefaultScore();
 
         boolean needFullRecalc = (previousScore == null) || (changedArea == null);
         score.overallScore = 0L;
@@ -189,7 +191,7 @@ public class DefaultFeedback implements Feedback {
             int pixelStart = (gy * width * 4) + (gridLeft * 4);
             int pixelEnd = pixelStart + ((gridRight - gridLeft) * 4);
 
-            //index 0 is alpha, start at 1 (blue)
+            // index 0 is alpha, start at 1 (blue)
             for (int i = pixelStart + 1; i < pixelEnd; i++) {
                 int blue1 = targetBuffer[i] & 0x0FF;
                 int blue2 = testBuffer[i++] & 0x0FF;
@@ -206,7 +208,7 @@ public class DefaultFeedback implements Feedback {
                 long redError = red1 - red2;
                 redError *= redError;
 
-                gridError += redError + greenError  + blueError;
+                gridError += redError + greenError + blueError;
             }
         }
 

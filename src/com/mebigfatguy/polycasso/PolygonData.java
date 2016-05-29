@@ -3,13 +3,13 @@
  * Copyright 2009-2015 MeBigFatGuy.com
  * Copyright 2009-2015 Dave Brosius
  * Inspired by work by Roger Alsing
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *    http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -27,8 +27,7 @@ import java.awt.Rectangle;
 import java.util.Random;
 
 /**
- * a class for holding the information for one polygon, including points, color
- * and alpha level.
+ * a class for holding the information for one polygon, including points, color and alpha level.
  */
 public class PolygonData implements Cloneable {
 
@@ -38,10 +37,13 @@ public class PolygonData implements Cloneable {
 
     /**
      * creates a polygon data structure with required information
-     * 
-     * @param c the color of the polygon
-     * @param xpar the alpha level of the polygon
-     * @param poly the points of the polygon
+     *
+     * @param c
+     *            the color of the polygon
+     * @param xpar
+     *            the alpha level of the polygon
+     * @param poly
+     *            the points of the polygon
      */
     public PolygonData(Color c, float xpar, Polygon poly) {
         color = c;
@@ -51,7 +53,7 @@ public class PolygonData implements Cloneable {
 
     /**
      * retrieve the polygon (points) of this polygondata
-     * 
+     *
      * @return a polygon
      */
     public Polygon getPolygon() {
@@ -60,14 +62,18 @@ public class PolygonData implements Cloneable {
 
     /**
      * gets the transparency of this polygon: 0.0 is transparent, 1.0 is opaque
+     * 
      * @return the transparency value
      */
     public float getAlpha() {
         return alpha;
     }
+
     /**
      * sets the transparency of this polygon: 0.0 is transparent, 1.0 is opaque
-     * @param xpar the transparency value
+     * 
+     * @param xpar
+     *            the transparency value
      */
     public void setAlpha(float xpar) {
         alpha = xpar;
@@ -75,7 +81,7 @@ public class PolygonData implements Cloneable {
 
     /**
      * retrieves the color of this polygon
-     * 
+     *
      * @return the polygon color
      */
     public Color getColor() {
@@ -84,8 +90,9 @@ public class PolygonData implements Cloneable {
 
     /**
      * sets the color of this polygon
-     * 
-     * @param newColor the new color to use
+     *
+     * @param newColor
+     *            the new color to use
      */
     public void setColor(Color newColor) {
         color = newColor;
@@ -93,10 +100,12 @@ public class PolygonData implements Cloneable {
 
     /**
      * creates a totally random polygon that is limited by the specified size
-     * 
-     * @param size the maximum size of the bounding box of the polygon
-     * @param maxPoints the maximum number of points to generate
-     * 
+     *
+     * @param size
+     *            the maximum size of the bounding box of the polygon
+     * @param maxPoints
+     *            the maximum number of points to generate
+     *
      * @return a random polygon
      */
     public static PolygonData randomPoly(Dimension size, int maxPoints) {
@@ -116,12 +125,14 @@ public class PolygonData implements Cloneable {
     }
 
     /**
-     * returns a rectangle that new polygons should points out of. It attempts to allow
-     * for creating localized polygons, so that small areas will be generated more likely.
-     * 
-     * @param r a random generator object
-     * @param maxSize the max size of the image
-     * 
+     * returns a rectangle that new polygons should points out of. It attempts to allow for creating localized polygons, so that small areas will be generated
+     * more likely.
+     *
+     * @param r
+     *            a random generator object
+     * @param maxSize
+     *            the max size of the image
+     *
      * @return a rectangle to pick polygon points out of
      */
     private static Rectangle getPolyBounds(Random r, Dimension maxSize) {
@@ -150,13 +161,13 @@ public class PolygonData implements Cloneable {
 
     /**
      * clones this polygon data data
-     * 
+     *
      * @return a copy of the polygon data
      */
     @Override
-    public Object clone() {
+    public PolygonData clone() {
         try {
-            PolygonData clone = (PolygonData)super.clone();
+            PolygonData clone = (PolygonData) super.clone();
             clone.color = new Color(color.getRed(), color.getGreen(), color.getBlue());
             clone.polygon = new Polygon(polygon.xpoints, polygon.ypoints, polygon.npoints);
 
@@ -168,8 +179,9 @@ public class PolygonData implements Cloneable {
 
     /**
      * draws this polygondata on a specified graphics object
-     * 
-     * @param g the graphics object on which to draw this polygon
+     *
+     * @param g
+     *            the graphics object on which to draw this polygon
      */
     public void draw(Graphics2D g) {
         g.setColor(color);

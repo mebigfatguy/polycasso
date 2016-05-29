@@ -1,9 +1,8 @@
 package com.mebigfatguy.polycasso;
 
 /**
- * a default implementation of a score for the error in a image against a target image
- * this score maintains a grid of scores representing scores in sections of the image, and
- * then rolls up these scores to an overall score.
+ * a default implementation of a score for the error in a image against a target image this score maintains a grid of scores representing scores in sections of
+ * the image, and then rolls up these scores to an overall score.
  */
 public class DefaultScore implements Score {
 
@@ -27,8 +26,9 @@ public class DefaultScore implements Score {
 
     /**
      * constructs a score with the specified delta, spreads the score across all grids
-     * 
-     * @param delta the delta score
+     *
+     * @param delta
+     *            the delta score
      */
     public DefaultScore(long delta) {
         overallScore = delta;
@@ -45,6 +45,7 @@ public class DefaultScore implements Score {
 
     /**
      * returns the sum of the square of pixel errors
+     * 
      * @return the delta between a generate image and the target
      */
     @Override
@@ -54,8 +55,9 @@ public class DefaultScore implements Score {
 
     /**
      * compares this score to another
-     * 
-     * @param o the score to compare to
+     *
+     * @param o
+     *            the score to compare to
      * @return whether the two scores have the same delta
      */
     @Override
@@ -69,11 +71,11 @@ public class DefaultScore implements Score {
 
     /**
      * clones this object
-     * 
+     *
      * @return a clone
      */
     @Override
-    public Object clone() {
+    public DefaultScore clone() {
         DefaultScore clonedScore;
 
         try {
@@ -93,7 +95,7 @@ public class DefaultScore implements Score {
 
     /**
      * generates a hash code for this score
-     * 
+     *
      * @return the hash code of this score
      */
     @Override
@@ -103,7 +105,7 @@ public class DefaultScore implements Score {
 
     /**
      * returns a string representation of the score
-     * 
+     *
      * @return the score as a string
      */
     @Override

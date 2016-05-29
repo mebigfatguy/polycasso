@@ -3,13 +3,13 @@
  * Copyright 2009-2015 MeBigFatGuy.com
  * Copyright 2009-2015 Dave Brosius
  * Inspired by work by Roger Alsing
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *    http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -29,9 +29,8 @@ import java.util.List;
 import java.util.Random;
 
 /**
- * a class that applies various improvement attempts to a polygon, attempts to prioritize
- * which algorithms to pick based on what has worked in the past, as well as priorities which
- * polygons have had success being transformed.
+ * a class that applies various improvement attempts to a polygon, attempts to prioritize which algorithms to pick based on what has worked in the past, as well
+ * as priorities which polygons have had success being transformed.
  */
 public class Improver {
     private final Settings settings;
@@ -45,9 +44,13 @@ public class Improver {
 
     /**
      * create an improver using a specified image size
-     * @param confSettings the settings to be used
-     * @param genHandler the generation handler
-     * @param size the size of the image
+     * 
+     * @param confSettings
+     *            the settings to be used
+     * @param genHandler
+     *            the generation handler
+     * @param size
+     *            the size of the image
      */
     public Improver(Settings confSettings, GenerationHandler genHandler, Dimension size) {
         settings = confSettings;
@@ -59,36 +62,37 @@ public class Improver {
 
     /**
      * get the list of polygons usually after attempted to be improved
-     * 
+     *
      * @return the list of polygons
      */
     public List<PolygonData> getData() {
         if (polygons == null) {
             return new ArrayList<PolygonData>();
         }
-        return Collections.<PolygonData>unmodifiableList(polygons);
+        return Collections.<PolygonData> unmodifiableList(polygons);
     }
 
     /**
      * updates the stats for types that successfully improved the image
-     * 
-     * @param type the improvement type that was successful
-     * @param successful whether the improvement was successful
+     *
+     * @param type
+     *            the improvement type that was successful
+     * @param successful
+     *            whether the improvement was successful
      */
     public void typeWasSuccessful(ImprovementType type, boolean successful) {
         stats.typeWasSuccessful(type, successful);
     }
 
     /**
-     * attempts to improve on one polygon randomly by adjusting it according to a randomly
-     * selected improvement type
-     * 
+     * attempts to improve on one polygon randomly by adjusting it according to a randomly selected improvement type
+     *
      * @return the improvement type used to alter the data
      */
     public ImprovementType improveRandomly() {
         changedMember = generationHandler.getRandomMember(false);
         if (changedMember != null) {
-            polygons = new ArrayList<PolygonData>(Arrays.<PolygonData>asList(changedMember.getData().clone()));
+            polygons = new ArrayList<PolygonData>(Arrays.<PolygonData> asList(changedMember.getData().clone()));
         } else {
             polygons = new ArrayList<PolygonData>();
         }
@@ -120,7 +124,7 @@ public class Improver {
 
             case AddPoint: {
                 int idx = r.nextInt(polygons.size());
-                PolygonData pd = (PolygonData)polygons.get(idx).clone();
+                PolygonData pd = polygons.get(idx).clone();
                 Polygon polygon = pd.getPolygon();
                 changedArea = polygon.getBounds();
                 if (polygon.npoints < settings.getMaxPoints()) {
@@ -153,15 +157,15 @@ public class Improver {
 
             case RemovePoint: {
                 int idx = r.nextInt(polygons.size());
-                PolygonData pd = (PolygonData)polygons.get(idx).clone();
+                PolygonData pd = polygons.get(idx).clone();
                 Polygon polygon = pd.getPolygon();
                 changedArea = polygon.getBounds();
                 if (polygon.npoints > 3) {
                     int delPos = r.nextInt(polygon.npoints);
 
                     int numPtCopy = polygon.npoints - delPos - 1;
-                    System.arraycopy(polygon.xpoints, delPos+1, polygon.xpoints, delPos, numPtCopy);
-                    System.arraycopy(polygon.ypoints, delPos+1, polygon.ypoints, delPos, numPtCopy);
+                    System.arraycopy(polygon.xpoints, delPos + 1, polygon.xpoints, delPos, numPtCopy);
+                    System.arraycopy(polygon.ypoints, delPos + 1, polygon.ypoints, delPos, numPtCopy);
                     polygon.npoints--;
                     polygon.invalidate();
                     changedArea = changedArea.union(polygon.getBounds());
@@ -176,7 +180,7 @@ public class Improver {
 
             case MovePoint: {
                 int idx = r.nextInt(polygons.size());
-                PolygonData pd = (PolygonData)polygons.get(idx).clone();
+                PolygonData pd = polygons.get(idx).clone();
                 Polygon polygon = pd.getPolygon();
                 changedArea = polygon.getBounds();
                 int movePos = r.nextInt(polygon.npoints);
@@ -196,14 +200,13 @@ public class Improver {
 
             case RectifyPoint: {
                 int idx = r.nextInt(polygons.size());
-                PolygonData pd = (PolygonData)polygons.get(idx).clone();
+                PolygonData pd = polygons.get(idx).clone();
                 Polygon polygon = pd.getPolygon();
                 changedArea = polygon.getBounds();
                 int rectifyPos = r.nextInt(polygon.npoints);
                 int targetPos = (rectifyPos == 0) ? polygon.npoints - 1 : (rectifyPos - 1);
 
-                if (Math.abs(polygon.xpoints[rectifyPos] - polygon.xpoints[targetPos]) <
-                        Math.abs(polygon.ypoints[rectifyPos] - polygon.ypoints[targetPos])) {
+                if (Math.abs(polygon.xpoints[rectifyPos] - polygon.xpoints[targetPos]) < Math.abs(polygon.ypoints[rectifyPos] - polygon.ypoints[targetPos])) {
                     polygon.xpoints[rectifyPos] = polygon.xpoints[targetPos];
                 } else {
                     polygon.ypoints[rectifyPos] = polygon.ypoints[targetPos];
@@ -229,7 +232,7 @@ public class Improver {
 
             case ShrinkPoly: {
                 int idx = r.nextInt(polygons.size());
-                PolygonData pd = (PolygonData)polygons.get(idx).clone();
+                PolygonData pd = polygons.get(idx).clone();
                 Polygon polygon = pd.getPolygon();
                 changedArea = polygon.getBounds();
                 Rectangle bbox = polygon.getBounds();
@@ -250,7 +253,7 @@ public class Improver {
 
             case EnlargePoly: {
                 int idx = r.nextInt(polygons.size());
-                PolygonData pd = (PolygonData)polygons.get(idx).clone();
+                PolygonData pd = polygons.get(idx).clone();
                 Polygon polygon = pd.getPolygon();
                 changedArea = polygon.getBounds();
                 Rectangle bbox = polygon.getBounds();
@@ -272,7 +275,7 @@ public class Improver {
 
             case ShiftPoly: {
                 int idx = r.nextInt(polygons.size());
-                PolygonData pd = (PolygonData)polygons.get(idx).clone();
+                PolygonData pd = polygons.get(idx).clone();
                 Polygon polygon = pd.getPolygon();
                 changedArea = polygon.getBounds();
                 int maxMovement = settings.getMaxPtMovement();
@@ -293,7 +296,7 @@ public class Improver {
 
             case ChangeColor: {
                 int idx = r.nextInt(polygons.size());
-                PolygonData pd = (PolygonData)polygons.get(idx).clone();
+                PolygonData pd = polygons.get(idx).clone();
                 changedArea = pd.getPolygon().getBounds();
                 Color color = pd.getColor();
                 int comp = r.nextInt(3);
@@ -327,7 +330,7 @@ public class Improver {
 
             case White: {
                 int idx = r.nextInt(polygons.size());
-                PolygonData pd = (PolygonData)polygons.get(idx).clone();
+                PolygonData pd = polygons.get(idx).clone();
                 changedArea = pd.getPolygon().getBounds();
                 pd.setColor(Color.WHITE);
                 pd.setAlpha(1);
@@ -337,7 +340,7 @@ public class Improver {
 
             case Black: {
                 int idx = r.nextInt(polygons.size());
-                PolygonData pd = (PolygonData)polygons.get(idx).clone();
+                PolygonData pd = polygons.get(idx).clone();
                 changedArea = pd.getPolygon().getBounds();
                 pd.setColor(Color.BLACK);
                 pd.setAlpha(1);
@@ -347,11 +350,11 @@ public class Improver {
 
             case ChangeAlpha:
                 int idx = r.nextInt(polygons.size());
-                PolygonData pd = (PolygonData)polygons.get(idx).clone();
+                PolygonData pd = polygons.get(idx).clone();
                 changedArea = pd.getPolygon().getBounds();
                 pd.setAlpha(r.nextFloat());
                 polygons.set(idx, pd);
-                break;
+            break;
 
             case Breed: {
                 GenerationMember copyMember = generationHandler.getRandomMember(false);
@@ -402,7 +405,7 @@ public class Improver {
 
     /**
      * returns the member image from which this generated image was created
-     * 
+     *
      * @return the parent generated image member
      */
     public GenerationMember getParentGenerationMember() {
@@ -411,7 +414,7 @@ public class Improver {
 
     /**
      * returns the area that was changed in this image
-     * 
+     *
      * @return the rectangular bounds that was changed, or null for a complete change
      */
     public Rectangle getChangedArea() {
@@ -431,11 +434,14 @@ public class Improver {
 
     /**
      * clip a value between a min and max value
-     * 
-     * @param min the min value
-     * @param max the max value
-     * @param value the value to clip
-     * 
+     *
+     * @param min
+     *            the min value
+     * @param max
+     *            the max value
+     * @param value
+     *            the value to clip
+     *
      * @return the clipped value
      */
     private static int clipToRange(int min, int max, int value) {

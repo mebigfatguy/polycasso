@@ -3,13 +3,13 @@
  * Copyright 2009-2015 MeBigFatGuy.com
  * Copyright 2009-2015 Dave Brosius
  * Inspired by work by Roger Alsing
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *    http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -38,8 +38,7 @@ import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
 /**
- * a simple dialog to allow for the editing of various settings used to
- * control how urls are fetched thru a proxy.
+ * a simple dialog to allow for the editing of various settings used to control how urls are fetched thru a proxy.
  */
 public class ProxyDialog extends JDialog {
     private static final long serialVersionUID = 7454644049634022854L;
@@ -53,12 +52,13 @@ public class ProxyDialog extends JDialog {
 
     /**
      * constructs the dialog using the passed in settings to set default values
-     * 
-     * @param settings the default values for settings
+     *
+     * @param settings
+     *            the default values for settings
      */
     public ProxyDialog(Settings settings) {
         setTitle(PolycassoBundle.getString(PolycassoBundle.Key.Proxy));
-        dlgSettings = (Settings)settings.clone();
+        dlgSettings = settings.clone();
         initComponents();
         initListeners();
         isOK = false;
@@ -66,7 +66,7 @@ public class ProxyDialog extends JDialog {
 
     /**
      * did the user click the ok button
-     * 
+     *
      * @return if the ok button was clicked
      */
     public boolean isOK() {
@@ -75,7 +75,7 @@ public class ProxyDialog extends JDialog {
 
     /**
      * retrieves the settings set in the dialog by the user
-     * 
+     *
      * @return the updated settings
      */
     public Settings getSettings() {
@@ -95,7 +95,7 @@ public class ProxyDialog extends JDialog {
 
     /**
      * creates the proxy settings panel
-     * 
+     *
      * @return the proxy panel
      */
     private JPanel createProxyPanel() {
@@ -128,7 +128,7 @@ public class ProxyDialog extends JDialog {
 
     /**
      * creates the control panel
-     * 
+     *
      * @return the control panel
      */
     private JPanel createControlPanel() {
@@ -177,7 +177,7 @@ public class ProxyDialog extends JDialog {
 
     /**
      * makes sure that settings selected are rational, and warns otherwise
-     * 
+     *
      * @return whether the settings are valid
      */
     private boolean validateSettings() {
