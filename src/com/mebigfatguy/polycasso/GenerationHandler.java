@@ -3,13 +3,13 @@
  * Copyright 2009-2015 MeBigFatGuy.com
  * Copyright 2009-2015 Dave Brosius
  * Inspired by work by Roger Alsing
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *    http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -44,9 +44,11 @@ public class GenerationHandler implements Serializable {
 
     /**
      * constructs a handler for managing successive generations of image samples
-     * 
-     * @param confSettings settings to use for generation and elite size
-     * @param imageSize the size of the target image
+     *
+     * @param confSettings
+     *            settings to use for generation and elite size
+     * @param imageSize
+     *            the size of the target image
      */
     public GenerationHandler(Settings confSettings, Dimension imageSize) {
         random = new Random();
@@ -62,16 +64,18 @@ public class GenerationHandler implements Serializable {
 
     /**
      * add a sample polygon set to this generation with a given score
-     * 
-     * @param score the deviation from perfection this set calculates
-     * 
-     * @param polygonData the polygons that draw the image
-     * 
+     *
+     * @param score
+     *            the deviation from perfection this set calculates
+     *
+     * @param polygonData
+     *            the polygons that draw the image
+     *
      * @return whether this is the best polygon set so far
      */
     public ImprovementResult addPolygonData(Score score, PolygonData[] polygonData) {
         GenerationMember newMember = new GenerationMember(score, polygonData);
-        synchronized(generation) {
+        synchronized (generation) {
             generation.add(newMember);
             if (generation.size() >= settings.getGenerationSize()) {
                 processGeneration();
@@ -91,14 +95,14 @@ public class GenerationHandler implements Serializable {
     }
 
     /**
-     * pick a random member either from the general pool or elite pool
-     * skew the results towards the elite
-     * 
-     * @param elite whether to pick from the elite pool or not
+     * pick a random member either from the general pool or elite pool skew the results towards the elite
+     *
+     * @param elite
+     *            whether to pick from the elite pool or not
      * @return a random member
      */
     public GenerationMember getRandomMember(boolean elite) {
-        synchronized(generation) {
+        synchronized (generation) {
             int size = elite ? (settings.getEliteSize() % generation.size()) : generation.size();
 
             if (size == 0) {
@@ -107,7 +111,7 @@ public class GenerationHandler implements Serializable {
 
             int r = random.nextInt(size);
 
-            int idx = (int)(r * ((double) r / (double) size));
+            int idx = (int) (r * ((double) r / (double) size));
 
             return generation.get(idx);
         }
@@ -115,11 +119,11 @@ public class GenerationHandler implements Serializable {
 
     /**
      * returns the best polygon set to draw the picture
-     * 
+     *
      * @return the best polygon set
      */
     public GenerationMember getBestMember() {
-        synchronized(generation) {
+        synchronized (generation) {
             return bestMember;
         }
     }
@@ -127,7 +131,7 @@ public class GenerationHandler implements Serializable {
     private void processGeneration() {
         int eliteSize = settings.getEliteSize();
 
-        Collections.<GenerationMember>sort(generation);
+        Collections.<GenerationMember> sort(generation);
         int sz = generation.size();
 
         List<GenerationMember> nextGeneration = new ArrayList<GenerationMember>(settings.getGenerationSize() + 10);
@@ -135,7 +139,7 @@ public class GenerationHandler implements Serializable {
             nextGeneration.add(generation.get(i));
         }
 
-        if (settings.isUseAnnealing() && (annealingValue > 0.01)) {
+        if ((annealingValue > 0.01) && settings.isUseAnnealing()) {
             int annealingReplacements = 0;
 
             /* always keep the best, so start at 1 */
@@ -153,16 +157,18 @@ public class GenerationHandler implements Serializable {
             }
 
             if (Polycasso.DEBUG) {
-                System.out.println("Generation " + generationNumber + " had " + annealingReplacements + " annealing replacements with annealing value: " + annealingValue);
+                System.out.println(
+                        "Generation " + generationNumber + " had " + annealingReplacements + " annealing replacements with annealing value: " + annealingValue);
             }
         }
 
         generation = nextGeneration;
 
-        eliteCutOff = generation.get(eliteSize-1).getScore().getDelta();
+        eliteCutOff = generation.get(eliteSize - 1).getScore().getDelta();
 
         if (Polycasso.DEBUG) {
-            System.out.println("Generation " + generationNumber + " had " + generationBests + " bests and " + generationElites + " elites. Best Score: " + generation.get(0).getScore());
+            System.out.println("Generation " + generationNumber + " had " + generationBests + " bests and " + generationElites + " elites. Best Score: "
+                    + generation.get(0).getScore());
         }
         generationBests = 0;
         generationElites = 0;
