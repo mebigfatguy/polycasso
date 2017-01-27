@@ -1,8 +1,8 @@
 <!--
 /*
  * polycasso - Cubism Artwork generator
- * Copyright 2009-2015 MeBigFatGuy.com
- * Copyright 2009-2015 Dave Brosius
+ * Copyright 2009-2017 MeBigFatGuy.com
+ * Copyright 2009-2017 Dave Brosius
  * Inspired by work by Roger Alsing
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
@@ -149,7 +149,7 @@
 				 destdir="${javadoc.dir}"
 				 windowtitle="polycasso api">
 		    <doctitle><![CDATA[<h1>polycasso javadoc</h1>]]></doctitle>
-		    <bottom><![CDATA[<i>Copyright &#169; 2009-2015 MeBigFatGuy.com. All Rights Reserved.</i>]]></bottom>
+		    <bottom><![CDATA[<i>Copyright &#169; 2009-2017 MeBigFatGuy.com. All Rights Reserved.</i>]]></bottom>
 		</javadoc>
 	</target>
 	
