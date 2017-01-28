@@ -190,8 +190,8 @@ public class Improver {
                 int moveY = r.nextInt(dblMax) - maxMovement;
                 polygon.xpoints[movePos] += moveX;
                 polygon.ypoints[movePos] += moveY;
-                clipToRange(0, imageSize.width, polygon.xpoints[movePos]);
-                clipToRange(0, imageSize.height, polygon.ypoints[movePos]);
+                polygon.xpoints[movePos] = clipToRange(0, imageSize.width, polygon.xpoints[movePos]);
+                polygon.ypoints[movePos] = clipToRange(0, imageSize.height, polygon.ypoints[movePos]);
                 polygon.invalidate();
                 changedArea = changedArea.union(polygon.getBounds());
                 polygons.set(idx, pd);
