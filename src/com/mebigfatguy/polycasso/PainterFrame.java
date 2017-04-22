@@ -3,13 +3,13 @@
  * Copyright 2009-2017 MeBigFatGuy.com
  * Copyright 2009-2017 Dave Brosius
  * Inspired by work by Roger Alsing
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *    http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -29,11 +29,12 @@ import java.awt.event.WindowEvent;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.MessageFormat;
 
 import javax.swing.ImageIcon;
@@ -140,8 +141,12 @@ public class PainterFrame extends JFrame implements ImageGeneratedListener {
             @Override
             public void windowClosing(WindowEvent we) {
                 dispose();
-                saveSettings(settings);
-                System.exit(0);
+                try {
+                    saveSettings(settings);
+                } catch (IOException e) {
+                } finally {
+                    System.exit(0);
+                }
             }
         });
 
@@ -211,8 +216,12 @@ public class PainterFrame extends JFrame implements ImageGeneratedListener {
                     generator.stopGenerating();
                 }
                 dispose();
-                saveSettings(settings);
-                System.exit(0);
+                try {
+                    saveSettings(settings);
+                } catch (IOException e) {
+                } finally {
+                    System.exit(0);
+                }
             }
         });
 
@@ -266,8 +275,9 @@ public class PainterFrame extends JFrame implements ImageGeneratedListener {
 
     /**
      * implements the ImageGeneratedListener interface to redraw the new best image
-     * 
-     * @param event the event describing the new best image
+     *
+     * @param event
+     *            the event describing the new best image
      */
     @Override
     public void imageGenerated(ImageGeneratedEvent event) {
@@ -276,8 +286,9 @@ public class PainterFrame extends JFrame implements ImageGeneratedListener {
 
     /**
      * save the image to what ever format was chosen
-     * 
-     * @param type the chosen file type to save as
+     *
+     * @param type
+     *            the chosen file type to save as
      */
     public void saveImage(FileType type) {
         try {
@@ -287,7 +298,8 @@ public class PainterFrame extends JFrame implements ImageGeneratedListener {
                 File f = new File(fileName);
                 if (f.exists()) {
                     String message = MessageFormat.format(PolycassoBundle.getString(PolycassoBundle.Key.OverwriteWarning), fileName);
-                    int choice = JOptionPane.showConfirmDialog(PainterFrame.this, message, PolycassoBundle.getString(PolycassoBundle.Key.SaveAs), JOptionPane.YES_NO_OPTION);
+                    int choice = JOptionPane.showConfirmDialog(PainterFrame.this, message, PolycassoBundle.getString(PolycassoBundle.Key.SaveAs),
+                            JOptionPane.YES_NO_OPTION);
                     if (choice != JOptionPane.YES_OPTION) {
                         return;
                     }
@@ -314,7 +326,7 @@ public class PainterFrame extends JFrame implements ImageGeneratedListener {
 
         Dimension wSize = new Dimension(size);
         wSize.height += 2 * PainterFrame.this.getJMenuBar().getHeight();
-        if (Polycasso.DEBUG){
+        if (Polycasso.DEBUG) {
             wSize.height *= 2;
         }
         setSize(wSize);
@@ -326,25 +338,27 @@ public class PainterFrame extends JFrame implements ImageGeneratedListener {
     }
 
     private Settings loadSettings() {
-        File polyDir = getSettingsDirectory();
-        try (ObjectInputStream ois = new ObjectInputStream(new BufferedInputStream(new FileInputStream(new File(polyDir, "settings.ser"))))) {
-            return (Settings)ois.readObject();
+        try {
+            Path polyPath = getSettingsDirectory();
+            try (ObjectInputStream ois = new ObjectInputStream(new BufferedInputStream(Files.newInputStream(polyPath.resolve("settings.ser"))))) {
+                return (Settings) ois.readObject();
+            }
         } catch (Exception e) {
             return new Settings();
         }
     }
 
-    private void saveSettings(Settings s) {
-    	File polyDir = getSettingsDirectory();
-        try (ObjectOutputStream oos = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(new File(polyDir, "settings.ser"))))) {
+    private void saveSettings(Settings s) throws IOException {
+        Path polyPath = getSettingsDirectory();
+        try (ObjectOutputStream oos = new ObjectOutputStream(new BufferedOutputStream(Files.newOutputStream(polyPath.resolve("settings.ser"))))) {
             oos.writeObject(s);
         } catch (Exception e) {
         }
     }
 
-    private File getSettingsDirectory() {
-        File polyDir = new File(System.getProperty("user.home"), ".polycasso");
-        polyDir.mkdirs();
-        return polyDir;
+    private Path getSettingsDirectory() throws IOException {
+        Path polyPath = Paths.get(System.getProperty("user.home"), ".polycasso");
+        Files.createDirectories(polyPath);
+        return polyPath;
     }
 }
