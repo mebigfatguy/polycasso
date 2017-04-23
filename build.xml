@@ -31,8 +31,8 @@
 	<property name="htdocs.dir" value="${basedir}/htdocs"/>
 	<property name="jnlp.dir" value="${htdocs.dir}/jnlp"/>
 	<property name="javadoc.dir" value="${target.dir}/javadoc"/>
-	<property name="javac.source" value="1.7"/>
-	<property name="javac.target" value="1.7"/>
+	<property name="javac.source" value="1.8"/>
+	<property name="javac.target" value="1.8"/>
 	<property name="javac.deprecation" value="on"/>
 	<property name="javac.debug" value="on"/>
 	

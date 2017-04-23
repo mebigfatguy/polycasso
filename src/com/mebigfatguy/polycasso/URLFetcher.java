@@ -3,13 +3,13 @@
  * Copyright 2009-2017 MeBigFatGuy.com
  * Copyright 2009-2017 Dave Brosius
  * Inspired by work by Roger Alsing
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *    http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -24,9 +24,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
+import java.net.MalformedURLException;
 import java.net.Proxy;
 import java.net.Proxy.Type;
 import java.net.URL;
+import java.util.Base64;
 
 import org.apache.commons.io.IOUtils;
 
@@ -42,17 +44,19 @@ public class URLFetcher {
     }
 
     /**
-     * retrieve arbitrary data found at a specific url
-     * - either http or file urls
-     * for http requests, sets the user-agent to mozilla to avoid
-     * sites being cranky about a java sniffer
-     * 
-     * @param url the url to retrieve
-     * @param proxyHost the host to use for the proxy
-     * @param proxyPort the port to use for the proxy
+     * retrieve arbitrary data found at a specific url - either http or file urls for http requests, sets the user-agent to mozilla to avoid sites being cranky
+     * about a java sniffer
+     *
+     * @param url
+     *            the url to retrieve
+     * @param proxyHost
+     *            the host to use for the proxy
+     * @param proxyPort
+     *            the port to use for the proxy
      * @return a byte array of the content
-     * 
-     * @throws IOException the site fails to respond
+     *
+     * @throws IOException
+     *             the site fails to respond
      */
     public static byte[] fetchURLData(String url, String proxyHost, int proxyPort) throws IOException {
         HttpURLConnection con = null;
@@ -69,8 +73,9 @@ public class URLFetcher {
                 } else {
                     proxy = Proxy.NO_PROXY;
                 }
-                con = (HttpURLConnection)u.openConnection(proxy);
-                con.addRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/536.6 (KHTML, like Gecko) Chrome/20.0.1092.0 Safari/536.6");
+                con = (HttpURLConnection) u.openConnection(proxy);
+                con.addRequestProperty("User-Agent",
+                        "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/536.6 (KHTML, like Gecko) Chrome/20.0.1092.0 Safari/536.6");
                 con.addRequestProperty("Accept-Charset", "UTF-8");
                 con.addRequestProperty("Accept-Language", "en-US,en");
                 con.addRequestProperty("Accept", "text/html,image/*");
@@ -84,6 +89,29 @@ public class URLFetcher {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             IOUtils.copy(is, baos);
             return baos.toByteArray();
+        } catch (MalformedURLException e) {
+            if (url.startsWith("data:")) {
+                int commaPos = url.indexOf(",");
+                if (commaPos < 0) {
+                    throw new IOException("Poorly formatted data url");
+                }
+                String prefix = url.substring("data:".length(), commaPos);
+                String[] attributes = prefix.trim().split(";");
+                if (attributes.length < 0) {
+                    throw new IOException("Data url doesn't specify mime type");
+                }
+
+                String data = url.substring(commaPos + 1);
+                switch (attributes[0]) {
+                    case "image/jpeg":
+                        return Base64.getDecoder().decode(data);
+
+                    default:
+                        throw new IOException("Unsupported data url mimetype: " + attributes[0]);
+                }
+            } else {
+                throw e;
+            }
         } finally {
             IOUtils.closeQuietly(is);
             if (con != null) {
