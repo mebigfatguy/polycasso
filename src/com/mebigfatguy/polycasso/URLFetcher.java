@@ -104,6 +104,8 @@ public class URLFetcher {
                 String data = url.substring(commaPos + 1);
                 switch (attributes[0]) {
                     case "image/jpeg":
+                    case "image/png":
+                    case "image/gif":
                         return Base64.getDecoder().decode(data);
 
                     default:
