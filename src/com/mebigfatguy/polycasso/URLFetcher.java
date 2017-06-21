@@ -101,11 +101,11 @@ public class URLFetcher {
                     throw new IOException("Data url doesn't specify mime type");
                 }
 
-                String data = url.substring(commaPos + 1);
                 switch (attributes[0]) {
                     case "image/jpeg":
                     case "image/png":
                     case "image/gif":
+                        String data = url.substring(commaPos + 1);
                         return Base64.getDecoder().decode(data);
 
                     default:

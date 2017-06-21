@@ -3,13 +3,13 @@
  * Copyright 2009-2017 MeBigFatGuy.com
  * Copyright 2009-2017 Dave Brosius
  * Inspired by work by Roger Alsing
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *    http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -32,12 +32,11 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * class that generates test images iteratively looking for the best image that matches a target.
- * The images are generated from semi-transparent polygons that are improved upon over time.
- * This class generates multiple images in parallel to keep multicore processors busy.
+ * class that generates test images iteratively looking for the best image that matches a target. The images are generated from semi-transparent polygons that
+ * are improved upon over time. This class generates multiple images in parallel to keep multicore processors busy.
  */
 public class DefaultImageGenerator implements ImageGenerator, Runnable {
-    private final Set<ImageGeneratedListener> listeners = new HashSet<ImageGeneratedListener>();
+    private final Set<ImageGeneratedListener> listeners = new HashSet<>();
     private final Settings settings;
     private final BufferedImage targetImage;
     private GenerationHandler generationHandler;
@@ -48,9 +47,13 @@ public class DefaultImageGenerator implements ImageGenerator, Runnable {
 
     /**
      * creates an ImageGenerator for the given target image, and size
-     * @param confSettings the configuration settings
-     * @param image the target image
-     * @param size the dimension of the image
+     * 
+     * @param confSettings
+     *            the configuration settings
+     * @param image
+     *            the target image
+     * @param size
+     *            the dimension of the image
      */
     public DefaultImageGenerator(Settings confSettings, Image image, Dimension size) {
         settings = confSettings;
@@ -70,7 +73,7 @@ public class DefaultImageGenerator implements ImageGenerator, Runnable {
 
     /**
      * retrieves the scaled target iamge
-     * 
+     *
      * @return the target image
      */
     @Override
@@ -79,9 +82,8 @@ public class DefaultImageGenerator implements ImageGenerator, Runnable {
     }
 
     /**
-     * returns the image size that is being generated. This size might be different the original image
-     * if the size is bigger then the max setting.
-     * 
+     * returns the image size that is being generated. This size might be different the original image if the size is bigger then the max setting.
+     *
      * @return the image size
      */
     @Override
@@ -90,10 +92,10 @@ public class DefaultImageGenerator implements ImageGenerator, Runnable {
     }
 
     /**
-     * allows interested parties to register to receive events when a new best image has been
-     * found.
-     * 
-     * @param listener the listener that is interested in events
+     * allows interested parties to register to receive events when a new best image has been found.
+     *
+     * @param listener
+     *            the listener that is interested in events
      */
     @Override
     public void addImageGeneratedListener(ImageGeneratedListener listener) {
@@ -101,10 +103,10 @@ public class DefaultImageGenerator implements ImageGenerator, Runnable {
     }
 
     /**
-     * allows uninterested parties to unregister to receive events when a new best image is
-     * found
-     * 
-     * @param listener the listener that is no longer needed
+     * allows uninterested parties to unregister to receive events when a new best image is found
+     *
+     * @param listener
+     *            the listener that is no longer needed
      */
     @Override
     public void removeImageGeneratedListener(ImageGeneratedListener listener) {
@@ -113,8 +115,9 @@ public class DefaultImageGenerator implements ImageGenerator, Runnable {
 
     /**
      * informs all listeners that a new best image has been found
-     * 
-     * @param image the new best image
+     *
+     * @param image
+     *            the new best image
      */
     @Override
     public void fireImageGenerated(Image image) {
@@ -129,7 +132,7 @@ public class DefaultImageGenerator implements ImageGenerator, Runnable {
      */
     @Override
     public void startGenerating() {
-        synchronized(startStopLock) {
+        synchronized (startStopLock) {
             if (t == null) {
 
                 populateGenerationZeroElite();
@@ -148,7 +151,7 @@ public class DefaultImageGenerator implements ImageGenerator, Runnable {
      */
     @Override
     public void stopGenerating() {
-        synchronized(startStopLock) {
+        synchronized (startStopLock) {
             if (t != null) {
                 try {
                     for (Thread element : t) {
@@ -170,7 +173,7 @@ public class DefaultImageGenerator implements ImageGenerator, Runnable {
      */
     @Override
     public void complete() {
-        synchronized(startStopLock) {
+        synchronized (startStopLock) {
             if (t != null) {
                 stopGenerating();
                 t = new Thread[1];
@@ -182,23 +185,23 @@ public class DefaultImageGenerator implements ImageGenerator, Runnable {
 
     /**
      * retrieves the best set of polygons for drawing the image so far
-     * 
+     *
      * @return the best set of polygons
      */
     @Override
     public PolygonData[] getBestData() {
         return generationHandler.getBestMember().getData();
     }
+
     /**
-     * the runnable interface implementation to repeatedly improve upon the image and check to
-     * see if it is closer to the target image. Images are created in batches of settings.numCompetingImages
-     * and the best one (if better than the parent) is selected as the new best.
+     * the runnable interface implementation to repeatedly improve upon the image and check to see if it is closer to the target image. Images are created in
+     * batches of settings.numCompetingImages and the best one (if better than the parent) is selected as the new best.
      */
     @Override
     public void run() {
         try {
             BufferedImage image = new BufferedImage(imageSize.width, imageSize.height, BufferedImage.TYPE_4BYTE_ABGR);
-            Graphics2D g2d = (Graphics2D)image.getGraphics();
+            Graphics2D g2d = (Graphics2D) image.getGraphics();
             try {
                 Composite srcOpaque = AlphaComposite.getInstance(AlphaComposite.SRC, 1.0f);
                 Improver improver = new Improver(settings, generationHandler, imageSize);
@@ -221,12 +224,12 @@ public class DefaultImageGenerator implements ImageGenerator, Runnable {
                             wasSuccessful = true;
                             image = new BufferedImage(imageSize.width, imageSize.height, BufferedImage.TYPE_4BYTE_ABGR);
                             g2d.dispose();
-                            g2d = (Graphics2D)image.getGraphics();
-                            break;
+                            g2d = (Graphics2D) image.getGraphics();
+                        break;
 
                         case ELITE:
                             wasSuccessful = true;
-                            break;
+                        break;
 
                         default:
                             wasSuccessful = false;
@@ -256,10 +259,10 @@ public class DefaultImageGenerator implements ImageGenerator, Runnable {
         Composite srcOpaque = AlphaComposite.getInstance(AlphaComposite.SRC, 1.0f);
         for (int i = 0; i < settings.getEliteSize(); i++) {
             BufferedImage image = new BufferedImage(imageSize.width, imageSize.height, BufferedImage.TYPE_4BYTE_ABGR);
-            List<PolygonData> polygons = new ArrayList<PolygonData>();
+            List<PolygonData> polygons = new ArrayList<>();
             PolygonData pd = PolygonData.randomPoly(imageSize, settings.getMaxPoints());
             polygons.add(pd);
-            Graphics2D g2d = (Graphics2D)image.getGraphics();
+            Graphics2D g2d = (Graphics2D) image.getGraphics();
             try {
                 imagePolygonData(g2d, polygons, srcOpaque);
                 Score delta = feedback.calculateScore(image, null, null);
@@ -275,11 +278,11 @@ public class DefaultImageGenerator implements ImageGenerator, Runnable {
             return origSize;
         }
 
-        double hFrac = (double)maxSize.width / (double)origSize.width;
-        double vFrac = (double)maxSize.height/ (double)origSize.height;
+        double hFrac = (double) maxSize.width / (double) origSize.width;
+        double vFrac = (double) maxSize.height / (double) origSize.height;
 
         double frac = (hFrac < vFrac) ? hFrac : vFrac;
 
-        return new Dimension((int)(frac * origSize.width), (int)(frac * origSize.height));
+        return new Dimension((int) (frac * origSize.width), (int) (frac * origSize.height));
     }
 }
