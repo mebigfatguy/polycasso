@@ -3,13 +3,13 @@
  * Copyright 2009-2017 MeBigFatGuy.com
  * Copyright 2009-2017 Dave Brosius
  * Inspired by work by Roger Alsing
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *    http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -41,14 +41,16 @@ public class JavaSaver implements Saver {
 
     /**
      * saves the polygon data as a java file that opens a JFrame and draws the polygons
-     * 
-     * @param fileName the name of the file to write to
-     * @param imageSize the dimension of the image
-     * @param data the polygons to draw
+     *
+     * @param fileName
+     *            the name of the file to write to
+     * @param imageSize
+     *            the dimension of the image
+     * @param data
+     *            the polygons to draw
      */
     @Override
-    public void save(String fileName, Dimension imageSize, PolygonData[] data)
-            throws IOException {
+    public void save(String fileName, Dimension imageSize, PolygonData[] data) throws IOException {
 
         int sep = fileName.lastIndexOf(File.separator);
         String className;
@@ -63,7 +65,7 @@ public class JavaSaver implements Saver {
         }
 
         try (PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(fileName)));
-        	 InputStream templateStream = getClass().getResourceAsStream("/com/mebigfatguy/polycasso/JavaSaver.template")) {
+                InputStream templateStream = getClass().getResourceAsStream("/com/mebigfatguy/polycasso/JavaSaver.template")) {
             String template = IOUtils.toString(templateStream);
 
             String polygonData = getPolygonData(data);
@@ -84,7 +86,7 @@ public class JavaSaver implements Saver {
         }
     }
 
-    private String getPolygonData(PolygonData[] data) {
+    private String getPolygonData(PolygonData... data) {
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);
 

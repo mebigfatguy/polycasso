@@ -31,14 +31,14 @@ public class GenerationMember implements Comparable<GenerationMember>, Serializa
     private final Score score;
     private final PolygonData[] data;
 
-    GenerationMember(Score polyScore, PolygonData[] polyData) {
+    GenerationMember(Score polyScore, PolygonData... polyData) {
         score = polyScore;
         data = polyData;
     }
 
     /**
      * returns the score for this member
-     * 
+     *
      * @return the score
      */
     public Score getScore() {
