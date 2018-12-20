@@ -20,6 +20,7 @@ package com.mebigfatguy.polycasso;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -37,88 +38,101 @@ import org.apache.commons.io.IOUtils;
  */
 public class URLFetcher {
 
-    /**
-     * private to avoid construction of this static access only class
-     */
-    private URLFetcher() {
-    }
+	/**
+	 * private to avoid construction of this static access only class
+	 */
+	private URLFetcher() {
+	}
 
-    /**
-     * retrieve arbitrary data found at a specific url - either http or file urls for http requests, sets the user-agent to mozilla to avoid sites being cranky
-     * about a java sniffer
-     *
-     * @param url
-     *            the url to retrieve
-     * @param proxyHost
-     *            the host to use for the proxy
-     * @param proxyPort
-     *            the port to use for the proxy
-     * @return a byte array of the content
-     *
-     * @throws IOException
-     *             the site fails to respond
-     */
-    public static byte[] fetchURLData(String url, String proxyHost, int proxyPort) throws IOException {
-        HttpURLConnection con = null;
-        InputStream is = null;
+	/**
+	 * retrieve arbitrary data found at a specific url - either http or file urls
+	 * for http requests, sets the user-agent to mozilla to avoid sites being cranky
+	 * about a java sniffer
+	 *
+	 * @param url       the url to retrieve
+	 * @param proxyHost the host to use for the proxy
+	 * @param proxyPort the port to use for the proxy
+	 * @return a byte array of the content
+	 *
+	 * @throws IOException the site fails to respond
+	 */
+	public static byte[] fetchURLData(String url, String proxyHost, int proxyPort) throws IOException {
 
-        try {
-            URL u = new URL(url);
-            if (url.startsWith("file://")) {
-                is = new BufferedInputStream(u.openStream());
-            } else {
-                Proxy proxy;
-                if (proxyHost != null) {
-                    proxy = new Proxy(Type.HTTP, new InetSocketAddress(proxyHost, proxyPort));
-                } else {
-                    proxy = Proxy.NO_PROXY;
-                }
-                con = (HttpURLConnection) u.openConnection(proxy);
-                con.addRequestProperty("User-Agent",
-                        "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/536.6 (KHTML, like Gecko) Chrome/20.0.1092.0 Safari/536.6");
-                con.addRequestProperty("Accept-Charset", "UTF-8");
-                con.addRequestProperty("Accept-Language", "en-US,en");
-                con.addRequestProperty("Accept", "text/html,image/*");
-                con.setDoInput(true);
-                con.setDoOutput(false);
-                con.connect();
+		try (InputStream is = openStream(url, proxyHost, proxyPort)) {
 
-                is = new BufferedInputStream(con.getInputStream());
-            }
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			IOUtils.copy(is, baos);
+			return baos.toByteArray();
 
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            IOUtils.copy(is, baos);
-            return baos.toByteArray();
-        } catch (MalformedURLException e) {
-            if (url.startsWith("data:")) {
-                int commaPos = url.indexOf(",");
-                if (commaPos < 0) {
-                    throw new IOException("Poorly formatted data url");
-                }
-                String prefix = url.substring("data:".length(), commaPos);
-                String[] attributes = prefix.trim().split(";");
-                if (attributes.length < 0) {
-                    throw new IOException("Data url doesn't specify mime type");
-                }
+		} catch (MalformedURLException e) {
+			if (url.startsWith("data:")) {
+				int commaPos = url.indexOf(",");
+				if (commaPos < 0) {
+					throw new IOException("Poorly formatted data url");
+				}
+				String prefix = url.substring("data:".length(), commaPos);
+				String[] attributes = prefix.trim().split(";");
+				if (attributes.length < 0) {
+					throw new IOException("Data url doesn't specify mime type");
+				}
 
-                switch (attributes[0]) {
-                    case "image/jpeg":
-                    case "image/png":
-                    case "image/gif":
-                        String data = url.substring(commaPos + 1);
-                        return Base64.getDecoder().decode(data);
+				switch (attributes[0]) {
+				case "image/jpeg":
+				case "image/png":
+				case "image/gif":
+					String data = url.substring(commaPos + 1);
+					return Base64.getDecoder().decode(data);
 
-                    default:
-                        throw new IOException("Unsupported data url mimetype: " + attributes[0]);
-                }
-            } else {
-                throw e;
-            }
-        } finally {
-            IOUtils.closeQuietly(is);
-            if (con != null) {
-                con.disconnect();
-            }
-        }
-    }
+				default:
+					throw new IOException("Unsupported data url mimetype: " + attributes[0]);
+				}
+			} else {
+				throw e;
+			}
+		}
+	}
+
+	private static InputStream openStream(String url, String proxyHost, int proxyPort) throws IOException {
+		URL u = new URL(url);
+		if (url.startsWith("file://")) {
+			return new BufferedInputStream(u.openStream());
+		}
+
+		Proxy proxy;
+		if (proxyHost != null) {
+			proxy = new Proxy(Type.HTTP, new InetSocketAddress(proxyHost, proxyPort));
+		} else {
+			proxy = Proxy.NO_PROXY;
+		}
+		HttpURLConnection con = (HttpURLConnection) u.openConnection(proxy);
+		con.addRequestProperty("User-Agent",
+				"Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/536.6 (KHTML, like Gecko) Chrome/20.0.1092.0 Safari/536.6");
+		con.addRequestProperty("Accept-Charset", "UTF-8");
+		con.addRequestProperty("Accept-Language", "en-US,en");
+		con.addRequestProperty("Accept", "text/html,image/*");
+		con.setDoInput(true);
+		con.setDoOutput(false);
+		con.connect();
+
+		return new ConnectionStream(con);
+	}
+
+	private static class ConnectionStream extends FilterInputStream {
+
+		private HttpURLConnection connection;
+
+		public ConnectionStream(HttpURLConnection con) throws IOException {
+			super(new BufferedInputStream(con.getInputStream()));
+			connection = con;
+		}
+
+		@Override
+		public void close() {
+			try {
+				super.close();
+				connection.disconnect();
+			} catch (IOException e) {
+			}
+		}
+	}
 }
