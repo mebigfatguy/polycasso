@@ -21,14 +21,14 @@ package com.mebigfatguy.polycasso;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Polygon;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import org.apache.commons.io.IOUtils;
 
@@ -63,7 +63,7 @@ public class JavaSaver implements Saver {
 			className = className.substring(0, className.length() - EXTENSION.length());
 		}
 
-		try (PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(fileName)));
+		try (PrintWriter pw = new PrintWriter(Files.newBufferedWriter(Paths.get(fileName)));
 				InputStream templateStream = getClass()
 						.getResourceAsStream("/com/mebigfatguy/polycasso/JavaSaver.template")) {
 			String template = IOUtils.toString(templateStream, StandardCharsets.UTF_8);
