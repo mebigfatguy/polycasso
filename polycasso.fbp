@@ -1,8 +1,9 @@
 <Project projectName="polycasso">
-  <Jar>././classes</Jar>
-  <AuxClasspathEntry>././lib/forms-1.2.1.jar</AuxClasspathEntry>
-  <AuxClasspathEntry>./lib/commons-io-2.4.jar</AuxClasspathEntry>
-  <SrcDir>././src</SrcDir>
+  <Jar>./././classes</Jar>
+  <AuxClasspathEntry>./././lib/forms-1.2.1.jar</AuxClasspathEntry>
+  <AuxClasspathEntry>./lib/commons-io-2.6.jar</AuxClasspathEntry>
+  <AuxClasspathEntry>./lib/junit-4.12.jar</AuxClasspathEntry>
+  <SrcDir>./././src</SrcDir>
   <SuppressionFilter>
     <LastVersion value="-1" relOp="NEQ"/>
   </SuppressionFilter>
