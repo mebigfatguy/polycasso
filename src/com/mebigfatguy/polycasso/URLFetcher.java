@@ -72,7 +72,7 @@ public class URLFetcher {
 				}
 				String prefix = url.substring("data:".length(), commaPos);
 				String[] attributes = prefix.trim().split(";");
-				if (attributes.length < 0) {
+				if (attributes.length == 0) {
 					throw new IOException("Data url doesn't specify mime type");
 				}
 
