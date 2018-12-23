@@ -314,7 +314,7 @@ public class PainterFrame extends JFrame implements ImageGeneratedListener {
 		}
 	}
 
-	private void beginGenerating(Image targetImage) {
+	private void beginGenerating(Image targetImage) throws IOException {
 		if (generator != null) {
 			generator.stopGenerating();
 		}

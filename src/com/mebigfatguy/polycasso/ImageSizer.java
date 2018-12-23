@@ -20,6 +20,7 @@ package com.mebigfatguy.polycasso;
 
 import java.awt.Image;
 import java.awt.image.ImageObserver;
+import java.io.IOException;
 
 /**
  * ensures that the fetching of the width or height of an image will always
@@ -80,12 +81,12 @@ public class ImageSizer implements ImageObserver {
 	 *
 	 * @return the width of the image
 	 */
-	public int getWidth() {
+	public int getWidth() throws IOException {
 		synchronized (lock) {
 			try {
 				while (imageWidth < 0) {
 					if (error) {
-						throw new IllegalArgumentException("Couldn't generate image width");
+						throw new IOException("Couldn't generate image width");
 					}
 					lock.wait();
 				}
@@ -100,12 +101,12 @@ public class ImageSizer implements ImageObserver {
 	 *
 	 * @return the height of the image
 	 */
-	public int getHeight() {
+	public int getHeight() throws IOException {
 		synchronized (lock) {
 			try {
 				while (imageHeight < 0) {
 					if (error) {
-						throw new IllegalArgumentException("Couldn't generate image height");
+						throw new IOException("Couldn't generate image height");
 					}
 					lock.wait();
 				}
