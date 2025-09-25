@@ -33,12 +33,9 @@ import javax.swing.ImageIcon;
  * finds an image on the web to try to draw with polygons
  */
 public class RandomImageFinder {
-
-	private static final String ROOTURL = "http://www.dogpile.com";
+	private static final String ROOTURL = "https://www.dogpile.com";
 	private static final String URL = ROOTURL + "/search/images?q=%s";
-	private static final Pattern IMAGE_HTML_PATTERN = Pattern.compile(
-			"\\<div class=\"resultDisplayUrl\"\\>\\s*\\<a data-icl-coi=\"\\d*\" data-icl-cop=\"results-main\" href=\"([^\"]+)");
-
+	private static final Pattern IMAGE_HTML_PATTERN = Pattern.compile("\\<img src=\"([^\\\"]+)\"\\>");
 	private static final int NAMELEN = 3;
 	private static final int ATTEMPTS = 5;
 
